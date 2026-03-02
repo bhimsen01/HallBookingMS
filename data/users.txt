@@ -1,0 +1,2 @@
+U100,bhimsen,basnet,bhimsen@123,bhimsenbasnet,CUSTOMER,0.0,2026-02-28T15:53:16.452748
+U101,Bill,doe,bill@123,johndoej,MANAGER,0.0,2026-02-28T15:54:13.084437600
