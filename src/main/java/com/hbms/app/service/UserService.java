@@ -38,7 +38,6 @@ public class UserService {
         double balance=0;
         LocalDateTime userCreatedAt=LocalDateTime.now();
 
-
         User user=new User(userId, firstName, lastName, email, password, role, balance, userCreatedAt);
 
         userDAO.saveUser(user);

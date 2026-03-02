@@ -20,6 +20,7 @@ public class IdCounter {
                 counter.put("USER",100);
                 counter.put("BOOKING",100);
                 counter.put("ISSUE",100);
+                counter.put("PAYMENT",100);
                 counter.put("RECEIPT",100);
                 saveCounter();
                 return;
