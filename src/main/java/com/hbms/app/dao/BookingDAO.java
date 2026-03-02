@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDAO {
-    private final String file="data/Bookings.txt";
+    private final String file="data/bookings.txt";
 
     public void saveBooking(Booking booking){
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(file,true))){

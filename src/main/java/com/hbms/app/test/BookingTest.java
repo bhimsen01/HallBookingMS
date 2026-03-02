@@ -24,16 +24,18 @@ public class BookingTest {
         AuthUser testUser = new AuthUser("U100", "bhimsen", "basnet", "bhimsen@123", User.Role.CUSTOMER);
         Session.login(testUser);
 
-        String result = controller.addBooking(
-                "BANQUET",
-                "101",
-                "2026-03-02",
-                "11:30",
-                "12:20",
-                500.0
-        );
+//        String result = controller.addBooking(
+//                "BANQUET",
+//                "101",
+//                "2026-03-02",
+//                "11:30",
+//                "12:20",
+//                500.0
+//        );
+//
+//        System.out.println(result);
 
-        System.out.println(result);
+//        bookingService.cancelBooking("B102");
 
         Session.logout();
     }
