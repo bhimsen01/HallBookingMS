@@ -22,12 +22,26 @@ public class AddHallDialog extends JDialog {
         this.hallController = hallController;
         this.hallsPanel = hallsPanel;
 
-        setSize(400, 400);
+        setSize(500, 600);
         setLocationRelativeTo(parentFrame);
-        setLayout(new GridLayout(9, 2, 5, 5));
 
-        // Components
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
+
+        Font labelFont = new Font("Inter", Font.PLAIN, 14);
+
         JTextField tfNumber = new JTextField();
+        JTextField tfCapacity = new JTextField();
+        JTextField tfPrice = new JTextField();
+        JTextField tfRemarks = new JTextField();
+
+        tfNumber.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
+        tfCapacity.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
+        tfPrice.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
+        tfRemarks.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
+
+        // ===== Hall Type =====
         JRadioButton rbAuditorium = new JRadioButton("AUDITORIUM", true);
         JRadioButton rbBoardroom = new JRadioButton("BOARDROOM");
         JRadioButton rbBanquet = new JRadioButton("BANQUET");
@@ -37,74 +51,60 @@ public class AddHallDialog extends JDialog {
         bgType.add(rbBoardroom);
         bgType.add(rbBanquet);
 
-        JTextField tfCapacity = new JTextField();
-        JTextField tfPrice = new JTextField();
-        JTextField tfRemarks = new JTextField();
-
-        // Use JSpinner for time input with SpinnerDateModel and modern conversion
-        SpinnerDateModel fromModel = new SpinnerDateModel();
-        JSpinner spFrom = new JSpinner(fromModel);
-        spFrom.setEditor(new JSpinner.DateEditor(spFrom, "HH:mm"));
-
-        SpinnerDateModel untilModel = new SpinnerDateModel();
-        JSpinner spUntil = new JSpinner(untilModel);
-        spUntil.setEditor(new JSpinner.DateEditor(spUntil, "HH:mm"));
-
-        JButton btnAdd = new JButton("Add");
-        JButton btnCancel = new JButton("Cancel");
-
-        add(new JLabel("Hall Number:"));
-        add(tfNumber);
-
-        add(new JLabel("Hall Type:"));
-
-        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,10,0));
         radioPanel.add(rbAuditorium);
         radioPanel.add(rbBoardroom);
         radioPanel.add(rbBanquet);
-        add(radioPanel);
 
-        add(new JLabel("Capacity:"));
-        add(tfCapacity);
+        // ===== Time Spinners =====
+        SpinnerDateModel fromModel = new SpinnerDateModel();
+        JSpinner spFrom = new JSpinner(fromModel);
+        spFrom.setEditor(new JSpinner.DateEditor(spFrom,"HH:mm"));
+        spFrom.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
-        add(new JLabel("Price:"));
-        add(tfPrice);
+        SpinnerDateModel untilModel = new SpinnerDateModel();
+        JSpinner spUntil = new JSpinner(untilModel);
+        spUntil.setEditor(new JSpinner.DateEditor(spUntil,"HH:mm"));
+        spUntil.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
-        add(new JLabel("Available From (HH:mm):"));
-        add(spFrom);
+        JButton btnAdd = new JButton("Add Hall");
+        JButton btnCancel = new JButton("Cancel");
 
-        add(new JLabel("Available Until (HH:mm):"));
-        add(spUntil);
+        btnAdd.setPreferredSize(new Dimension(120,40));
+        btnCancel.setPreferredSize(new Dimension(120,40));
 
-        add(new JLabel("Remarks:"));
-        add(tfRemarks);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
+        buttonPanel.add(btnAdd);
+        buttonPanel.add(btnCancel);
 
-        add(btnAdd);
-        add(btnCancel);
+        // ===== Build Form =====
+        addField(formPanel,"Hall Number",tfNumber,labelFont);
+        addField(formPanel,"Hall Type",radioPanel,labelFont);
+        addField(formPanel,"Capacity",tfCapacity,labelFont);
+        addField(formPanel,"Price",tfPrice,labelFont);
+        addField(formPanel,"Available From",spFrom,labelFont);
+        addField(formPanel,"Available Until",spUntil,labelFont);
+        addField(formPanel,"Remarks",tfRemarks,labelFont);
+
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(buttonPanel);
+
+        add(formPanel);
 
         btnCancel.addActionListener(e -> dispose());
 
         btnAdd.addActionListener(e -> {
             try {
-                String numberStr = tfNumber.getText().trim();
-                String capacityStr = tfCapacity.getText().trim();
-                String priceStr = tfPrice.getText().trim();
 
-                System.out.println("Debug Inputs:");
-                System.out.println("Hall Number: '" + numberStr + "'");
-                System.out.println("Capacity: '" + capacityStr + "'");
-                System.out.println("Price: '" + priceStr + "'");
-
-                int hallNumber = Integer.parseInt(numberStr);
-                int capacity = Integer.parseInt(capacityStr);
-                double price = Double.parseDouble(priceStr);
+                int hallNumber = Integer.parseInt(tfNumber.getText().trim());
+                int capacity = Integer.parseInt(tfCapacity.getText().trim());
+                double price = Double.parseDouble(tfPrice.getText().trim());
 
                 Hall.HallType type =
                         rbAuditorium.isSelected() ? Hall.HallType.AUDITORIUM :
                                 rbBoardroom.isSelected() ? Hall.HallType.BOARDROOM :
                                         Hall.HallType.BANQUET;
 
-                // Convert spinner Date to LocalTime using modern API
                 Date fromDate = (Date) spFrom.getValue();
                 LocalTime availableFrom = Instant.ofEpochMilli(fromDate.getTime())
                         .atZone(ZoneId.systemDefault())
@@ -129,26 +129,28 @@ public class AddHallDialog extends JDialog {
 
                 boolean message = hallController.addHall(hall);
 
-                JOptionPane.showMessageDialog(this, message);
+                JOptionPane.showMessageDialog(this,message);
 
-                if (message) {
+                if(message){
                     hallsPanel.loadHalls();
                     dispose();
                 }
 
-            } catch (NumberFormatException nfe) {
+            } catch (Exception ex){
                 JOptionPane.showMessageDialog(this,
-                        "Invalid input format for number, capacity or price.\nPlease enter valid numbers.");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this,
-                        "Invalid input. Please check all fields.\n" +
-                                "Hall Number, Capacity must be integers.\n" +
-                                "Price must be a number.\n" +
-                                "Time will be selected from dropdown.");
+                        "Invalid input.\nHall Number & Capacity must be integers.\nPrice must be a number.");
             }
         });
 
         setVisible(true);
+    }
+
+    private void addField(JPanel panel,String label,Component field,Font font){
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(font);
+
+        panel.add(lbl);
+        panel.add(field);
+        panel.add(Box.createVerticalStrut(10));
     }
 }

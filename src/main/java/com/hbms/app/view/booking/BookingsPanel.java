@@ -22,13 +22,12 @@ public class BookingsPanel extends JPanel {
     public BookingsPanel(JFrame parentFrame, BookingController bookingController, IssueController issueController) {
 
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240));
 
         bookingDAO = new BookingDAO();
 
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBackground(new Color(240, 240, 240));
+        container.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
         // 🔥 Get current logged-in user ID
         String userId = Session.getCurrentUser().getUserId();
@@ -48,27 +47,46 @@ public class BookingsPanel extends JPanel {
         for (Booking booking : myBookings) {
 
 
-            JPanel card = new JPanel(new BorderLayout());
-            card.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            card.setBackground(Color.WHITE);
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-            card.setPreferredSize(new Dimension(500, 200));
+            JPanel card = new JPanel() {
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(50,50,100));
+                    g2.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+                    g2.dispose();
+                    super.paintComponent(g);
+                }
+            };
+
+            card.setLayout(new BorderLayout());
+            card.setOpaque(false);
+            card.setBorder(new EmptyBorder(15,15,15,15));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 170));
 
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
-            infoPanel.setBackground(Color.WHITE);
-            infoPanel.setBorder(new EmptyBorder(10,10,10,10));
+            infoPanel.setOpaque(false);
 
-            infoPanel.add(new JLabel("Hall Type: " + booking.getHallType()));
-            infoPanel.add(new JLabel("Hall Number: " + booking.getHallNumber()));
-            infoPanel.add(new JLabel("Date: " + booking.getBookingDate()));
-            infoPanel.add(new JLabel("Time: " + booking.getBookingFrom()
-                    + " - " + booking.getBookingUntil()));
-            infoPanel.add(new JLabel("Amount: RM " + booking.getAmount()));
-            infoPanel.add(new JLabel("Status: " + booking.getBookingStatus()));
+            Font labelFont = new Font("Inter", Font.PLAIN, 14);
+
+            JLabel hallType = new JLabel("Hall Type: " + booking.getHallType());
+            JLabel hallNumber = new JLabel("Hall Number: " + booking.getHallNumber());
+            JLabel date = new JLabel("Date: " + booking.getBookingDate());
+            JLabel time = new JLabel("Time: " + booking.getBookingFrom()
+                    + " - " + booking.getBookingUntil());
+            JLabel amount = new JLabel("Amount: RM " + booking.getAmount());
+            JLabel status = new JLabel("Status: " + booking.getBookingStatus());
+
+            JLabel[] labels = {hallType, hallNumber, date, time, amount, status};
+
+            for (JLabel lbl : labels) {
+                lbl.setForeground(Color.WHITE);
+                lbl.setFont(labelFont);
+                infoPanel.add(lbl);
+            }
 
             // 🔥 BUTTON PANEL
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            buttonPanel.setBackground(Color.WHITE);
+            buttonPanel.setOpaque(false);
 
             JButton btnCancel = new JButton("Cancel");
             JButton btnIssue = new JButton("Raise Issue");

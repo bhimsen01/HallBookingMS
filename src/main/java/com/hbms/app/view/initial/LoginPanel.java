@@ -14,27 +14,65 @@ public class LoginPanel extends JPanel {
 
     public LoginPanel(MainFrame frame, UserController userController){
         this.userController=userController;
-        setLayout(new GridLayout(4,2,10,10));
+
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(40, 80, 40, 80));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
+
+        // Title
+        JLabel lblTitle = new JLabel("Log in with your account");
+        lblTitle.setFont(new Font("Inter", Font.BOLD, 24));
+        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        gbc.gridy = 0;
+        add(lblTitle, gbc);
 
         JTextField tfEmail=new JTextField();
         JPasswordField pfPassword=new JPasswordField();
 
-        lblMessage=new JLabel("");
-        lblMessage.setForeground(Color.RED);
+        tfEmail.setPreferredSize(new Dimension(260, 32));
+        pfPassword.setPreferredSize(new Dimension(260, 32));
 
-        JButton btnLogin=new JButton("Login");
-        JButton btnBack=new JButton("Back");
+        // Email
+        gbc.gridy = 5;
+        add(new JLabel("Email"), gbc);
 
-        add(new JLabel("Email"));
-        add(tfEmail);
-        add(new JLabel("Password"));
-        add(pfPassword);
+        gbc.gridy = 6;
+        add(tfEmail, gbc);
 
-        add(lblMessage);
-        add(new JLabel(""));
+        // Password
+        gbc.gridy = 7;
+        add(new JLabel("Password"), gbc);
 
-        add(btnLogin);
-        add(btnBack);
+        gbc.gridy = 8;
+        add(pfPassword, gbc);
+
+        // Message
+        lblMessage = new JLabel("");
+        lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
+
+        gbc.gridy = 9;
+        add(lblMessage, gbc);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+
+        JButton btnLogin=new JButton("Log in");
+        JButton btnBack=new JButton("Cancel");
+
+        btnLogin.setPreferredSize(new Dimension(120, 40));
+        btnBack.setPreferredSize(new Dimension(120, 40));
+
+        buttonPanel.add(btnLogin);
+        buttonPanel.add(btnBack);
+
+        gbc.gridy = 10;
+        gbc.insets = new Insets(20, 0, 0, 0);
+        add(buttonPanel, gbc);
 
         btnBack.addActionListener(e-> frame.showScreen("START"));
 
@@ -43,12 +81,14 @@ public class LoginPanel extends JPanel {
             String password=new String(pfPassword.getPassword()).trim();
 
             if (email.isEmpty() || password.isEmpty()){
-                lblMessage.setText("Error! Empty fields.");
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Empty fields.");
                 return;
             }
 
             if (!email.contains("@")){
-                lblMessage.setText("Error! Invalid Email");
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Invalid email.");
                 return;
             }
 

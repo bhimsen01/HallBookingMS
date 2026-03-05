@@ -5,6 +5,7 @@ import com.hbms.app.model.Receipt;
 import com.hbms.app.utility.IdCounter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReceiptService {
     private final IdCounter idCounter;
@@ -26,5 +27,15 @@ public class ReceiptService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate receipt. ",e);
         }
+    }
+
+    public Receipt getReceiptByBookingId(String bookingId){
+        List<Receipt> receipts = receiptDAO.getAllReceipts();
+        for(Receipt receipt : receipts){
+            if(receipt.getBookingId().equals(bookingId)){
+                return receipt;
+            }
+        }
+        return null;
     }
 }

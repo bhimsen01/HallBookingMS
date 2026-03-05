@@ -2,6 +2,7 @@ package com.hbms.app.view.profile;
 
 import com.hbms.app.auth.AuthUser;
 import com.hbms.app.session.Session;
+import com.hbms.app.view.MainFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,19 +18,43 @@ public class ProfilePanel extends JPanel {
     public ProfilePanel(com.hbms.app.controller.UserController userController) {
         this.userController = userController;
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240));
 
         AuthUser currentUser = Session.getCurrentUser();
 
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
         // Main card - Display info as text
-        JPanel card = new JPanel(new GridLayout(5, 2, 10, 10));
-        card.setBackground(Color.WHITE);
+        JPanel card = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(50,50,100));
+                g2.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+
+        card.setLayout(new GridLayout(4, 2, 10, 10));
+        card.setOpaque(false);
         card.setBorder(new EmptyBorder(20, 20, 20, 20));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
+
+        Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
         lblFirstName = new JLabel(currentUser.getFirstName());
         lblLastName = new JLabel(currentUser.getLastName());
         lblEmail = new JLabel(currentUser.getEmail());
         lblRole = new JLabel(currentUser.getRole().toString());
+
+        JLabel[] labels = {new JLabel("First Name:"), lblFirstName, new JLabel("Last Name:"), lblLastName, new JLabel("Email:"), lblEmail, new JLabel("Role:"), lblRole};
+
+        for (JLabel lbl : labels) {
+            lbl.setForeground(Color.WHITE);
+            lbl.setFont(labelFont);
+        }
 
         card.add(new JLabel("First Name:"));
         card.add(lblFirstName);
@@ -39,14 +64,39 @@ public class ProfilePanel extends JPanel {
         card.add(lblEmail);
         card.add(new JLabel("Role:"));
         card.add(lblRole);
-        card.add(new JLabel(""));
+
+        container.add(card);
+        container.add(Box.createVerticalStrut(15));
+
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        buttonPanel.setOpaque(false);
 
         JButton btnUpdate = new JButton("Update Profile");
+        JButton btnLogout = new JButton("Logout");
+
+        btnUpdate.setPreferredSize(new Dimension(120, 40));
+        btnLogout.setPreferredSize(new Dimension(120, 40));
+
         btnUpdate.addActionListener(e -> openUpdateDialog(currentUser));
+        btnLogout.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Confirm Logout", JOptionPane.YES_NO_OPTION);
+            if(confirm == JOptionPane.YES_OPTION){
+                Session.logout();
+                if (SwingUtilities.getWindowAncestor(this) instanceof MainFrame) {
+                    ((MainFrame) SwingUtilities.getWindowAncestor(this)).showScreen("START");
+                }
+            }
+        });
 
-        card.add(btnUpdate);
+        buttonPanel.add(btnUpdate);
+        buttonPanel.add(btnLogout);
 
-        add(card, BorderLayout.NORTH);
+        container.add(buttonPanel);
+
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.setBorder(null);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     private void openUpdateDialog(AuthUser currentUser) {

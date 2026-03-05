@@ -15,12 +15,11 @@ public class BoardPanel extends JPanel {
 
     public BoardPanel(com.hbms.app.controller.UserController userController) {
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240));
         userDAO = new UserDAO();
 
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBackground(new Color(240, 240, 240));
+        container.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
         JScrollPane scrollPane = new JScrollPane(container);
         scrollPane.setBorder(null);
@@ -44,22 +43,42 @@ public class BoardPanel extends JPanel {
         }
 
         for (User user : users) {
-            JPanel card = new JPanel(new BorderLayout());
-            card.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            card.setBackground(Color.WHITE);
+            JPanel card = new JPanel() {
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(50,50,100));
+                    g2.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+                    g2.dispose();
+                    super.paintComponent(g);
+                }
+            };
+
+            card.setLayout(new BorderLayout());
+            card.setOpaque(false);
+            card.setBorder(new EmptyBorder(15,15,15,15));
             card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
 
             JPanel infoPanel = new JPanel(new GridLayout(0, 1));
-            infoPanel.setBackground(Color.WHITE);
-            infoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            infoPanel.setOpaque(false);
 
-            infoPanel.add(new JLabel("User ID: " + user.getUserId()));
-            infoPanel.add(new JLabel("Name: " + user.getFirstName() + " " + user.getLastName()));
-            infoPanel.add(new JLabel("Email: " + user.getEmail()));
-            infoPanel.add(new JLabel("Role: " + user.getRole()));
+            Font labelFont = new Font("Inter", Font.PLAIN, 14);
+
+            JLabel userId = new JLabel("User ID: " + user.getUserId());
+            JLabel name = new JLabel("Name: " + user.getFirstName() + " " + user.getLastName());
+            JLabel email = new JLabel("Email: " + user.getEmail());
+            JLabel role = new JLabel("Role: " + user.getRole());
+
+            JLabel[] labels = {userId, name, email, role};
+
+            for (JLabel lbl : labels) {
+                lbl.setForeground(Color.WHITE);
+                lbl.setFont(labelFont);
+                infoPanel.add(lbl);
+            }
 
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            buttonPanel.setBackground(Color.WHITE);
+            buttonPanel.setOpaque(false);
 
             JButton btnChangeRole = new JButton("Change Role");
             JButton btnDelete = new JButton("Delete");

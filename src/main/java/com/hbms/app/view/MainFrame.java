@@ -1,5 +1,6 @@
 package com.hbms.app.view;
 
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.hbms.app.controller.*;
 import com.hbms.app.dao.*;
 import com.hbms.app.service.*;
@@ -20,6 +21,7 @@ public class MainFrame extends JFrame {
     private HallController hallController;
     private IssueController issueController;
     private UserController userController;
+    private ReceiptController receiptController;
 
     public MainFrame() {
         IdCounter idCounter = new IdCounter();
@@ -41,14 +43,15 @@ public class MainFrame extends JFrame {
         UserService userService = new UserService(idCounter, userDAO);
 
         // Controllers - initialize all here
-        this.bookingController = new BookingController(bookingService, new ReceiptController(receiptService), new PaymentController(paymentService));
+        this.receiptController = new ReceiptController(receiptService);
+        this.bookingController = new BookingController(bookingService, receiptController, new PaymentController(paymentService));
         this.hallController = new HallController(hallService);
         this.issueController = new IssueController(issueService);
         this.userController = new UserController(userService);
 
         // JFrame setup
         setTitle("Hall Symphony");
-        setSize(600, 500);
+        setSize(1280, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -71,13 +74,52 @@ public class MainFrame extends JFrame {
 
     public void showDashboard() {
         // Pass all initialized controllers here
-        DashboardPanel dashboard = new DashboardPanel(this, bookingController, hallController, issueController, userController);
+        DashboardPanel dashboard = new DashboardPanel(this, bookingController, hallController, issueController, userController, receiptController);
 
         mainPanel.add(dashboard, "DASHBOARD");
         cardLayout.show(mainPanel, "DASHBOARD");
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainFrame::new);
+        try {
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+
+            // Rounded UI
+            UIManager.put("Component.arc", 18);
+            UIManager.put("Button.arc", 20);
+            UIManager.put("TextComponent.arc", 12);
+            UIManager.put("ProgressBar.arc", 12);
+            UIManager.put("TitlePane.unifiedBackground", true);
+
+            // Larger spacing
+            UIManager.put("Button.margin", new Insets(8,16,8,16));
+            UIManager.put("Component.focusWidth", 1);
+
+            UIManager.put("TitlePane.background", new Color(30, 30, 60));
+            UIManager.put("TitlePane.foreground", Color.WHITE);
+
+            // Accent color (Windows 11 style blue)
+            Color accent = new Color(0,145,255);
+            UIManager.put("Component.focusColor", accent);
+            UIManager.put("Button.default.background", accent);
+
+            // Load Inter variable font from resources and force it
+            Font interVariable = Font.createFont(
+                    Font.TRUETYPE_FONT,
+                    MainFrame.class.getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf")
+            ).deriveFont(14f);
+
+            UIManager.put("defaultFont", interVariable);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        // Launch the main frame
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            // Force all nested components to use Inter immediately
+            SwingUtilities.updateComponentTreeUI(frame);
+        });
     }
 }

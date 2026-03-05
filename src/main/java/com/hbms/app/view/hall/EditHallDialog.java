@@ -19,54 +19,64 @@ public class EditHallDialog extends JDialog {
         this.hallsPanel = hallsPanel;
         this.hall = hall;
 
-        setSize(400, 300);
+        setSize(500, 600);
         setLocationRelativeTo(parentFrame);
-        setLayout(new GridLayout(6, 2, 10, 10));
+
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
+
+        Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
         // Hall Number (read-only)
         JTextField tfNumber = new JTextField(String.valueOf(hall.getHallNumber()));
         tfNumber.setEditable(false);
+        tfNumber.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         // Hall Type (read-only)
         JTextField tfType = new JTextField(hall.getHallType().toString());
         tfType.setEditable(false);
+        tfType.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         // Price
         JTextField tfPrice = new JTextField(String.valueOf(hall.getHallPrice()));
+        tfPrice.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         // Capacity
         JTextField tfCapacity = new JTextField(String.valueOf(hall.getHallCapacity()));
+        tfCapacity.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         // Status dropdown
         JComboBox<Hall.HallStatus> cbStatus = new JComboBox<>(Hall.HallStatus.values());
         cbStatus.setSelectedItem(hall.getHallStatus());
+        cbStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         // Remarks
         JTextField tfRemarks = new JTextField(hall.getHallRemarks());
+        tfRemarks.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         JButton btnSave = new JButton("Save");
         JButton btnCancel = new JButton("Cancel");
 
-        add(new JLabel("Hall Number:"));
-        add(tfNumber);
+        btnSave.setPreferredSize(new Dimension(120,40));
+        btnCancel.setPreferredSize(new Dimension(120,40));
 
-        add(new JLabel("Hall Type:"));
-        add(tfType);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
 
-        add(new JLabel("Price:"));
-        add(tfPrice);
+        // ===== Build Form =====
+        addField(formPanel,"Hall Number",tfNumber,labelFont);
+        addField(formPanel,"Hall Type",tfType,labelFont);
+        addField(formPanel,"Price",tfPrice,labelFont);
+        addField(formPanel,"Capacity",tfCapacity,labelFont);
+        addField(formPanel,"Status",cbStatus,labelFont);
+        addField(formPanel,"Remarks",tfRemarks,labelFont);
 
-        add(new JLabel("Capacity:"));
-        add(tfCapacity);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(buttonPanel);
 
-        add(new JLabel("Status:"));
-        add(cbStatus);
-
-        add(new JLabel("Remarks:"));
-        add(tfRemarks);
-
-        add(btnSave);
-        add(btnCancel);
+        add(formPanel);
 
         btnCancel.addActionListener(e -> dispose());
 
@@ -94,5 +104,20 @@ public class EditHallDialog extends JDialog {
         });
 
         setVisible(true);
+    }
+
+    private void addField(JPanel panel, String label, Component field, Font font) {
+
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(font);
+        lbl.setHorizontalAlignment(SwingConstants.LEFT);
+        lbl.setMaximumSize(new Dimension(Integer.MAX_VALUE, lbl.getPreferredSize().height));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+
+        panel.add(lbl);
+        panel.add(Box.createVerticalStrut(4));
+        panel.add(field);
+        panel.add(Box.createVerticalStrut(12));
     }
 }

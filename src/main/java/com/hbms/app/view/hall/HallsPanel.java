@@ -17,22 +17,22 @@ public class HallsPanel extends JPanel {
     private final BookingController bookingController;
     private final HallController hallController;
     private final JFrame parentFrame;
+    private final com.hbms.app.controller.ReceiptController receiptController;
 
     private HallDAO hallDAO;
     private JPanel container;
 
-    public HallsPanel(JFrame parentFrame, BookingController bookingController, HallController hallController) {
+    public HallsPanel(JFrame parentFrame, BookingController bookingController, HallController hallController, com.hbms.app.controller.ReceiptController receiptController) {
         this.parentFrame = parentFrame;
         this.bookingController = bookingController;
         this.hallController = hallController;
+        this.receiptController = receiptController;
 
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240));
 
         hallDAO = new HallDAO();
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.setBackground(new Color(240,240,240));
 
         JButton btnAddHall = new JButton("Add Hall");
         btnAddHall.addActionListener(e ->
@@ -44,7 +44,7 @@ public class HallsPanel extends JPanel {
 
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBackground(new Color(240, 240, 240));
+        container.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
         JScrollPane scrollPane = new JScrollPane(container);
         scrollPane.setBorder(null);
@@ -61,22 +61,42 @@ public class HallsPanel extends JPanel {
         List<Hall> halls = hallDAO.getAllHalls();
         Collections.reverse(halls);
 
+        Font labelFont = new Font("Inter", Font.PLAIN, 14);
+
         for (Hall hall : halls) {
 
-            JPanel card = new JPanel(new BorderLayout());
-            card.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-            card.setBackground(Color.WHITE);
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
+            JPanel card = new JPanel() {
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(50,50,100));
+                    g2.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+                    g2.dispose();
+                    super.paintComponent(g);
+                }
+            };
+
+            card.setLayout(new BorderLayout());
+            card.setOpaque(false);
+            card.setBorder(new EmptyBorder(15,15,15,15));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 170));
 
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
-            infoPanel.setBackground(Color.WHITE);
-            infoPanel.setBorder(new EmptyBorder(10,10,10,10));
+            infoPanel.setOpaque(false);
 
-            infoPanel.add(new JLabel("Type: " + hall.getHallType()));
-            infoPanel.add(new JLabel("Hall: " + hall.getHallNumber()));
-            infoPanel.add(new JLabel("Capacity: " + hall.getHallCapacity()));
-            infoPanel.add(new JLabel("Price: RM " + hall.getHallPrice()));
-            infoPanel.add(new JLabel("Status: " + hall.getHallStatus()));
+            JLabel type = new JLabel("Type: " + hall.getHallType());
+            JLabel number = new JLabel("Hall: " + hall.getHallNumber());
+            JLabel capacity = new JLabel("Capacity: " + hall.getHallCapacity());
+            JLabel price = new JLabel("Price: RM " + hall.getHallPrice());
+            JLabel status = new JLabel("Status: " + hall.getHallStatus());
+
+            JLabel[] labels = {type, number, capacity, price, status};
+
+            for (JLabel lbl : labels) {
+                lbl.setForeground(Color.WHITE);
+                lbl.setFont(labelFont);
+                infoPanel.add(lbl);
+            }
 
             JButton bookButton = new JButton("Book Now");
             JButton editButton = new JButton("Edit");
@@ -87,7 +107,7 @@ public class HallsPanel extends JPanel {
             }
 
             bookButton.addActionListener(e ->
-                    new HallBookingDialog(parentFrame, hall, bookingController, () -> {
+                    new HallBookingDialog(parentFrame, hall, bookingController, receiptController, () -> {
                         SwingUtilities.invokeLater(() -> {
                             if (parentFrame instanceof MainFrame) {
                                 ((MainFrame) parentFrame).showDashboard();
@@ -111,12 +131,14 @@ public class HallsPanel extends JPanel {
                 }
             });
 
-            card.add(infoPanel, BorderLayout.CENTER);
             JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            south.setBackground(Color.WHITE);
+            south.setOpaque(false);
+
             south.add(bookButton);
             south.add(editButton);
             south.add(deleteButton);
+
+            card.add(infoPanel, BorderLayout.CENTER);
             card.add(south, BorderLayout.SOUTH);
 
             container.add(Box.createVerticalStrut(10));

@@ -7,69 +7,126 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SignupPanel extends JPanel {
+
     private JLabel lblMessage;
     private final UserController userController;
 
-    public SignupPanel(MainFrame frame, UserController userController){
+    public SignupPanel(MainFrame frame, UserController userController) {
         this.userController = userController;
-        setLayout(new GridLayout(5,2,10,10));
 
-        JTextField tfFirstName=new JTextField();
-        JTextField tfLastName=new JTextField();
-        JTextField tfEmail=new JTextField();
-        JPasswordField pfPassword=new JPasswordField();
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(40, 80, 40, 80));
 
-        lblMessage=new JLabel("");
-        lblMessage.setForeground(Color.RED);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(8, 0, 8, 0);
 
-        JButton btnSignup=new JButton("Sign up");
-        JButton btnBack=new JButton("Back");
+        // Title
+        JLabel lblTitle = new JLabel("Create Your Account");
+        lblTitle.setFont(new Font("Inter", Font.BOLD, 24));
+        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-        add(new JLabel("First name"));
-        add(tfFirstName);
-        add(new JLabel("Last name"));
-        add(tfLastName);
-        add(new JLabel("Email"));
-        add(tfEmail);
-        add(new JLabel("Password"));
-        add(pfPassword);
+        gbc.gridy = 0;
+        add(lblTitle, gbc);
 
-        add(lblMessage);
-        add(new JLabel(""));
+        JTextField tfFirstName = new JTextField();
+        JTextField tfLastName = new JTextField();
+        JTextField tfEmail = new JTextField();
+        JPasswordField pfPassword = new JPasswordField();
 
-        add(btnSignup);
-        add(btnBack);
+        tfFirstName.setPreferredSize(new Dimension(260, 32));
+        tfLastName.setPreferredSize(new Dimension(260, 32));
+        tfEmail.setPreferredSize(new Dimension(260, 32));
+        pfPassword.setPreferredSize(new Dimension(260, 32));
 
+        // First name
+        gbc.gridy = 1;
+        add(new JLabel("First name"), gbc);
+
+        gbc.gridy = 2;
+        add(tfFirstName, gbc);
+
+        // Last name
+        gbc.gridy = 3;
+        add(new JLabel("Last name"), gbc);
+
+        gbc.gridy = 4;
+        add(tfLastName, gbc);
+
+        // Email
+        gbc.gridy = 5;
+        add(new JLabel("Email"), gbc);
+
+        gbc.gridy = 6;
+        add(tfEmail, gbc);
+
+        // Password
+        gbc.gridy = 7;
+        add(new JLabel("Password"), gbc);
+
+        gbc.gridy = 8;
+        add(pfPassword, gbc);
+
+        // Message
+        lblMessage = new JLabel("");
+        lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
+
+        gbc.gridy = 9;
+        add(lblMessage, gbc);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.setOpaque(false);
+
+        JButton btnSignup = new JButton("Sign up");
+        JButton btnBack = new JButton("Cancel");
+
+        btnSignup.setPreferredSize(new Dimension(120, 40));
+        btnBack.setPreferredSize(new Dimension(120, 40));
+
+        buttonPanel.add(btnSignup);
+        buttonPanel.add(btnBack);
+
+        gbc.gridy = 10;
+        gbc.insets = new Insets(20, 0, 0, 0);
+        add(buttonPanel, gbc);
+
+        // Actions
         btnBack.addActionListener(e -> frame.showScreen("START"));
 
         btnSignup.addActionListener(e -> {
-            String firstName=tfFirstName.getText().trim();
-            String lastName=tfLastName.getText().trim();
-            String email=tfEmail.getText().trim();
-            String password=new String(pfPassword.getPassword()).trim();
 
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()){
-                lblMessage.setText("Error! Empty fields.");
+            String firstName = tfFirstName.getText().trim();
+            String lastName = tfLastName.getText().trim();
+            String email = tfEmail.getText().trim();
+            String password = new String(pfPassword.getPassword()).trim();
+
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Empty fields.");
                 return;
             }
 
-            if (!email.contains("@")){
-                lblMessage.setText("Error! Invalid Email");
+            if (!email.contains("@")) {
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Invalid Email");
                 return;
             }
 
-            if (password.length()<8){
-                lblMessage.setText("Error! Password must be of 8 characters.");
+            if (password.length() < 8) {
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Password must be at least 8 characters.");
                 return;
             }
 
-            boolean result =  userController.signup(firstName, lastName, email, password);
+            boolean result = userController.signup(firstName, lastName, email, password);
 
-            if (result){
+            if (result) {
                 lblMessage.setForeground(Color.GREEN);
                 lblMessage.setText("Signup successful.");
-            }
-            else {
+            } else {
                 lblMessage.setForeground(Color.RED);
                 lblMessage.setText("Signup failed.");
             }

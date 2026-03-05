@@ -1,7 +1,14 @@
 package com.hbms.app.view.hall;
 
 import com.hbms.app.controller.BookingController;
+import com.hbms.app.controller.ReceiptController;
+import com.hbms.app.dao.BookingDAO;
+import com.hbms.app.dao.UserDAO;
+import com.hbms.app.model.Booking;
 import com.hbms.app.model.Hall;
+import com.hbms.app.model.User;
+import com.hbms.app.session.Session;
+import com.hbms.app.session.Session;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +16,7 @@ import java.awt.*;
 public class HallBookingDialog extends JDialog {
     private JLabel lblMessage;
 
-    public HallBookingDialog(JFrame parentFrame, Hall hall, BookingController bookingController, Runnable onSuccess) {
+    public HallBookingDialog(JFrame parentFrame, Hall hall, BookingController bookingController, ReceiptController receiptController, Runnable onSuccess) {
         super(parentFrame, "Book Hall #" + hall.getHallNumber(), true); // true = modal
 
         setSize(350, 300);
@@ -49,7 +56,7 @@ public class HallBookingDialog extends JDialog {
         btnCancel.addActionListener(e -> dispose());
 
         btnBook.addActionListener(e -> {
-            boolean message = bookingController.addBooking(
+            String bookingId = bookingController.addBooking(
                     hall.getHallType().name(),
                     String.valueOf(hall.getHallNumber()),
                     tfDate.getText().trim(),
@@ -58,13 +65,28 @@ public class HallBookingDialog extends JDialog {
                     hall.getHallPrice()
             );
 
-            JOptionPane.showMessageDialog(this, message);
+            if (bookingId != null) {
+                // Get the receipt for this specific booking
+                com.hbms.app.model.Receipt receipt = receiptController.getReceiptByBookingId(bookingId);
 
-            if (message) {
+                if(receipt != null){
+                    BookingDAO bookingDAO = new BookingDAO();
+                    Booking booking = bookingDAO.findById(bookingId);
+
+                    UserDAO userDAO = new UserDAO();
+                    User user = userDAO.findById(Session.getCurrentUser().getUserId());
+
+                    if(booking != null && user != null){
+                        new ReceiptDialog(parentFrame, receipt, booking, user);
+                    }
+                }
+
                 if (onSuccess!=null) {
                     try { onSuccess.run(); } catch (Exception ex) { ex.printStackTrace(); }
                 }
                 dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Booking failed. Please try again.");
             }
         });
 

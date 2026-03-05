@@ -19,17 +19,17 @@ public class BookingController {
         this.paymentController = paymentController;
     }
 
-    public boolean addBooking(String hallType, String hallNumber, String bookingDate, String bookingFrom, String bookingUntil, double amount){
+    public String addBooking(String hallType, String hallNumber, String bookingDate, String bookingFrom, String bookingUntil, double amount){
         try{
            Booking booking=new Booking(hallType,Integer.parseInt(hallNumber), LocalDate.parse(bookingDate), LocalTime.parse(bookingFrom), LocalTime.parse(bookingUntil), amount);
            bookingService.bookHall(booking);
            new SymphonyAccountService().addBookingAmount(amount);
            paymentController.createPayment(booking.getBookingId(), booking.getAmount(), Payment.PaymentType.INCOMING);
            receiptController.generateReceipt(booking.getBookingId());
-           return true;
+           return booking.getBookingId();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

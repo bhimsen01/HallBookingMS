@@ -11,11 +11,10 @@ public class SidebarPanel extends JPanel {
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(160, 0));
-        setBackground(new Color(30, 30 ,60));
 
         JPanel navigationPanel=new JPanel();
         navigationPanel.setLayout(new GridLayout(0,1,5,5));
-        navigationPanel.setBackground(new Color(30,30,60));
+        navigationPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 20, 5));
 
         String[] navButtons={
                 "Home",
@@ -43,7 +42,7 @@ public class SidebarPanel extends JPanel {
         }
 
         JPanel bottomPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        bottomPanel.setBackground(new Color(30, 30, 60));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 5, 5));
 
         JButton profile = createButton("Profile");
         profile.addActionListener(e -> dashboardPanel.showContent("PROFILE"));

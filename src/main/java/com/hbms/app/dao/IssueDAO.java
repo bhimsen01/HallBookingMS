@@ -1,7 +1,6 @@
 package com.hbms.app.dao;
 
 import com.hbms.app.model.Issue;
-import com.hbms.app.model.User;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -50,7 +49,9 @@ public class IssueDAO {
             String line;
             while ((line=br.readLine())!=null){
                 String[] parts=line.split(",");
-                Issue issue=new Issue(parts[0], parts[1], parts[2], parts[3], parts[4], LocalDateTime.parse(parts[5]), LocalDateTime.parse(parts[6]), parts[7], Issue.IssueStatus.valueOf(parts[8]));
+                LocalDateTime createdAt = parts[5].isEmpty() ? null : LocalDateTime.parse(parts[5]);
+                LocalDateTime resolvedAt = parts[6].isEmpty() ? null : LocalDateTime.parse(parts[6]);
+                Issue issue=new Issue(parts[0], parts[1], parts[2], parts[3], parts[4], createdAt, resolvedAt, parts[7], Issue.IssueStatus.valueOf(parts[8]));
                 issues.add(issue);
             }
             return issues;
