@@ -2,10 +2,7 @@ package com.hbms.app.dao;
 
 import com.hbms.app.model.Receipt;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +10,18 @@ import java.util.List;
 public class ReceiptDAO {
     private final String file="data/receipts.txt";
 
+    private String convertToLine(Receipt receipt){
+        return receipt.getReceptID()+","
+                +receipt.getBookingId()+","
+                +receipt.getReceiptCreatedAt();
+    }
+
     public void saveReceipt(Receipt receipt){
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(file, true))){
-            String line=receipt.getReceptID()+","
-                    +receipt.getBookingId()+","
-                    +receipt.getReceiptCreatedAt();
-            bw.write(line);
+            bw.write(convertToLine(receipt));
             bw.newLine();
-            System.out.println("Receipt saved successfully.");
-        } catch (Exception e) {
-            System.out.println("Failed to save receipt. "+e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save receipt. ",e);
         }
     }
 
@@ -36,8 +35,8 @@ public class ReceiptDAO {
                 Receipt receipt=new Receipt(parts[0], parts[1], LocalDateTime.parse(parts[2]));
                 receipts.add(receipt);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get all receipts. ",e);
         }
         return receipts;
     }

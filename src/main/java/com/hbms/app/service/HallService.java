@@ -26,111 +26,63 @@ public class HallService {
         }
 
         hall.setHallAddedAt(LocalDateTime.now());
-        System.out.println("running hall service before calling hall dao");
-        hallDAO.saveHall(hall);
-        System.out.println("hall service after calling hall dao");
+        try{
+            hallDAO.saveHall(hall);
+            System.out.println("Hall added successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to add hall. ",e);
+        }
     }
 
     public void deleteHall(int hallNumber){
-        Hall hallToDelete = hallDAO.findByHallNumber(hallNumber);
+        Hall hallToDelete=hallDAO.findByHallNumber(hallNumber);
 
         if(hallToDelete==null){
-            System.out.println("Hall not found.");
-            return;
+            throw new RuntimeException("Hall to delete is not found.");
         }
 
-        List<String> lines=new ArrayList<>();
-
-        try(BufferedReader br=new BufferedReader(new FileReader("data/halls.txt"))){
-            String line;
-            while((line=br.readLine())!=null){
-                lines.add(line);
-            }
-            System.out.println("halls read successfully");
+        try{
+            hallDAO.deleteHall(hallNumber);
+            System.out.println("Hall deleted successfully.");
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        Iterator<String> iterator= lines.iterator();
-        while (iterator.hasNext()){
-            String line=iterator.next();
-            if (line.contains(String.valueOf(hallNumber))){
-                iterator.remove();
-                break;
-            }
-        }
-        System.out.println("hall removed");
-
-        try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/halls.txt"))){
-            for (String line:lines){
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println("Updated halls.txt");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to delete hall. ",e);
         }
     }
 
-    public void editHall(int hallNumber, Hall updatedHall) {
-        List<Hall> halls = hallDAO.getAllHalls();
-        boolean found = false;
+    public void editHall(int hallNumber, Hall editedHall) {
+        Hall hallToEdit=hallDAO.findByHallNumber(hallNumber);
 
-        for (Hall hall : halls) {
-
-            if (hall.getHallNumber() == hallNumber) {
-
-                if (updatedHall.getHallType() != null)
-                    hall.setHallType(updatedHall.getHallType());
-
-                if (updatedHall.getHallCapacity() > 0)
-                    hall.setHallCapacity(updatedHall.getHallCapacity());
-
-                if (updatedHall.getHallPrice() > 0)
-                    hall.setHallPrice(updatedHall.getHallPrice());
-
-                if (updatedHall.getHallAvailableFrom() != null)
-                    hall.setHallAvailableFrom(updatedHall.getHallAvailableFrom());
-
-                if (updatedHall.getHallAvailableUntil() != null)
-                    hall.setHallAvailableUntil(updatedHall.getHallAvailableUntil());
-
-                if (updatedHall.getHallStatus() != null)
-                    hall.setHallStatus(updatedHall.getHallStatus());
-
-                if (updatedHall.getHallRemarks() != null && !updatedHall.getHallRemarks().isEmpty())
-                    hall.setHallRemarks(updatedHall.getHallRemarks());
-
-                found = true;
-                break;
-            }
+        if(hallToEdit==null){
+            throw new RuntimeException("Hall to edit is not found.");
         }
 
-        if (!found) {
-            System.out.println("Hall to edit is not found.");
-            return;
-        }
+        if (editedHall.getHallType() != null)
+            hallToEdit.setHallType(editedHall.getHallType());
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("data/halls.txt"))) {
+        if (editedHall.getHallCapacity() > 0)
+            hallToEdit.setHallCapacity(editedHall.getHallCapacity());
 
-            for (Hall hall : halls) {
-                String line = hall.getHallNumber() + "," +
-                        hall.getHallType() + "," +
-                        hall.getHallCapacity() + "," +
-                        hall.getHallPrice() + "," +
-                        hall.getHallAvailableFrom() + "," +
-                        hall.getHallAvailableUntil() + "," +
-                        hall.getHallStatus() + "," +
-                        hall.getHallRemarks() + "," +
-                        hall.getHallAddedAt();
-                bw.write(line);
-                bw.newLine();
-            }
+        if (editedHall.getHallPrice() > 0)
+            hallToEdit.setHallPrice(editedHall.getHallPrice());
 
-            System.out.println("Hall updated successfully.");
+        if (editedHall.getHallAvailableFrom() != null)
+            hallToEdit.setHallAvailableFrom(editedHall.getHallAvailableFrom());
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (editedHall.getHallAvailableUntil() != null)
+            hallToEdit.setHallAvailableUntil(editedHall.getHallAvailableUntil());
+
+        if (editedHall.getHallStatus() != null)
+            hallToEdit.setHallStatus(editedHall.getHallStatus());
+
+        if (editedHall.getHallRemarks() != null && !editedHall.getHallRemarks().isEmpty())
+            hallToEdit.setHallRemarks(editedHall.getHallRemarks());
+
+        try{
+            hallDAO.editHall(hallToEdit);
+            System.out.println("Hall edited successfully.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to edit hall. ",e);
         }
     }
 }

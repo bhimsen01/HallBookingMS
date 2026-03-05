@@ -30,76 +30,41 @@ public class BookingService {
         booking.setBookingCreatedAt(LocalDateTime.now());
         booking.setBookingStatus(Booking.BookingStatus.CONFIRMED);
 
-        bookingDAO.saveBooking(booking);
+        try{
+            bookingDAO.saveBooking(booking);
+            System.out.println("Hall booked successfully.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to book hall.",e);
+        }
     }
 
     public void cancelBooking(String bookingId){
-        List<Booking> bookings=bookingDAO.getAllBookings();
-        boolean found=false;
+        Booking bookingToCancel=bookingDAO.findById(bookingId);
 
-        for(Booking booking:bookings){
-            if (booking.getBookingId().equals(bookingId)){
-                booking.setBookingStatus(Booking.BookingStatus.CANCELLED);
-
-                found =true;
-                break;
-            }
+        if(bookingToCancel==null){
+            throw new RuntimeException("Booking to cancel is not found.");
         }
 
-        if(!found){
-            System.out.println("Booking to cancel not found.");
-            return;
-        }
+        bookingToCancel.setBookingStatus(Booking.BookingStatus.CANCELLED);
 
-        try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/bookings.txt"))){
-            for (Booking booking:bookings){
-                String line=booking.getBookingId()+","
-                        +booking.getUserId()+","
-                        +booking.getHallType()+","
-                        +booking.getHallNumber()+","
-                        +booking.getBookingDate()+","
-                        +booking.getBookingFrom()+","
-                        +booking.getBookingUntil()+","
-                        +booking.getAmount()+","
-                        +booking.getBookingCreatedAt()+","
-                        +booking.getBookingStatus();
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println("Updated bookings.txt");
+        try{
+            bookingDAO.updateBooking(bookingToCancel);
+            System.out.println("Booking is cancelled.");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to cancel booking. ",e);
         }
     }
 
-    public void completeBooking(){
-        List<Booking> bookings=bookingDAO.getAllBookings();
-
-        for(Booking booking:bookings){
-            if (booking.getBookingStatus()== Booking.BookingStatus.CONFIRMED  && (LocalDate.now().isEqual(booking.getBookingDate()) && LocalTime.now().isAfter(booking.getBookingUntil()))){
-                booking.setBookingStatus(Booking.BookingStatus.COMPLETED);
-                break;
-            }
-        }
-
-        try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/bookings.txt"))){
-            for (Booking booking:bookings){
-                String line=booking.getBookingId()+","
-                        +booking.getUserId()+","
-                        +booking.getHallType()+","
-                        +booking.getHallNumber()+","
-                        +booking.getBookingDate()+","
-                        +booking.getBookingFrom()+","
-                        +booking.getBookingUntil()+","
-                        +booking.getAmount()+","
-                        +booking.getBookingCreatedAt()+","
-                        +booking.getBookingStatus();
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println("Updated bookings.txt");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void completeBooking(String bookingId){
+//        Booking bookingToCancel=bookingDAO.findById(bookingId);
+//
+//        bookingToCancel.setBookingStatus(Booking.BookingStatus.CANCELLED);
+//
+//        try{
+//            bookingDAO.updateBooking(bookingToCancel);
+//            System.out.println("Booking is completed.");
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to complete booking. ",e);
+//        }
+//    }
 }

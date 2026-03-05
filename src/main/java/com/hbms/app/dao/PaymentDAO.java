@@ -2,10 +2,7 @@ package com.hbms.app.dao;
 
 import com.hbms.app.model.Payment;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +10,20 @@ import java.util.List;
 public class PaymentDAO {
     private final String file="data/payments.txt";
 
+    private String convertToLine(Payment payment){
+        return payment.getPaymentId()+","
+                +payment.getBookingId()+","
+                +payment.getAmount()+","
+                +payment.getPaymentType()+","
+                +payment.getPaymentCreatedAt();
+    }
+
     public void savePayment(Payment payment){
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(file, true))){
-            String line=payment.getPaymentId()+","
-                    +payment.getBookingId()+","
-                    +payment.getAmount()+","
-                    +payment.getPaymentType()+","
-                    +payment.getPaymentCreatedAt();
-            bw.write(line);
+            bw.write(convertToLine(payment));
             bw.newLine();
-            System.out.println("Payment saved successfully.");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save payment. ",e);
         }
     }
 
@@ -39,8 +38,8 @@ public class PaymentDAO {
                 payments.add(payment);
             }
             return payments;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get all payments. ",e);
         }
     }
 

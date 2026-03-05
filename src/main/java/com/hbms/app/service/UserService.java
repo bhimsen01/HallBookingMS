@@ -5,10 +5,7 @@ import com.hbms.app.dao.UserDAO;
 import com.hbms.app.model.User;
 import com.hbms.app.utility.IdCounter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +37,13 @@ public class UserService {
 
         User user=new User(userId, firstName, lastName, email, password, role, balance, userCreatedAt);
 
-        userDAO.saveUser(user);
+        try{
+            userDAO.saveUser(user);
+            System.out.println("Signup successful.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Signup failed. ",e);
+        }
     }
 
     public AuthUser login(String email, String password){
@@ -58,131 +61,78 @@ public class UserService {
         if (!user.getPassword().equals(password))
             throw new IllegalArgumentException("Incorrect password.");
 
-        return new AuthUser(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+        try{
+            return new AuthUser(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Login failed. ",e);
+        }
     }
 
     public void deleteUser(String userId){
         User userToDelete=userDAO.findById(userId);
 
         if(userToDelete==null){
-            System.out.println("User to delete does not exist");
-        } else {
-            List<String> lines=new ArrayList<>();
+            throw new RuntimeException("User to delete is not found.");
+        }
 
-            try(BufferedReader br=new BufferedReader(new FileReader("data/users.txt"))){
-                String line;
-                while((line=br.readLine())!=null){
-                    lines.add(line);
-                }
-                System.out.println("users read successfully");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            Iterator<String> iterator= lines.iterator();
-            while (iterator.hasNext()){
-                String line=iterator.next();
-                if (line.contains(userId)){
-                    iterator.remove();
-                    break;
-                }
-            }
-            System.out.println("hall removed");
-
-            try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/users.txt"))){
-                for (String line:lines){
-                    bw.write(line);
-                    bw.newLine();
-                }
-                System.out.println("Updated users.txt");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        try{
+            userDAO.deleteUser(userId);
+            System.out.println("User deleted.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user. ",e);
         }
     }
 
     public void updateUserRole(String userId, User updatedUser){
-        List<User> users=userDAO.getAllUsers();
-        boolean found=false;
+        User userToUpdate=userDAO.findById(userId);
 
-        for(User user:users){
-            if (user.getUserId().equals(userId)){
-                if(updatedUser.getRole()!=null){
-                    user.setRole(updatedUser.getRole());
-                }
-                found =true;
-                break;
-            }
+        if(userToUpdate==null){
+            throw new RuntimeException("User to update is not found.");
         }
 
-        if(!found){
-            System.out.println("User to edit not found.");
-            return;
+        if(userToUpdate.getRole()!=null){
+            userToUpdate.setRole(updatedUser.getRole());
+        } else {
+            throw new RuntimeException("Role is null.");
         }
 
-        try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/users.txt"))){
-            for (User user:users){
-                String line=user.getUserId()+","
-                        +user.getFirstName()+","
-                        +user.getLastName()+","
-                        +user.getEmail()+","
-                        +user.getPassword()+","
-                        +user.getRole()+","
-                        +user.getBalance()+","
-                        +user.getUserCreatedAt();
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println("Updated users.txt");
+        try{
+            userDAO.updateUser(userToUpdate);
+            System.out.println("User role updated.");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to update user role. ",e);
         }
     }
 
     public void updateUserDetails(String userId, User updatedUser){
-        List<User> users=userDAO.getAllUsers();
-        boolean found=false;
+        User userToUpdate=userDAO.findById(userId);
 
-        for(User user:users){
-            if (user.getUserId().equals(userId)){
-                if(updatedUser.getFirstName()!=null)
-                    user.setFirstName(updatedUser.getFirstName());
-
-                if(updatedUser.getLastName()!=null)
-                    user.setLastName(updatedUser.getLastName());
-
-                if(updatedUser.getEmail()!=null)
-                    user.setEmail(updatedUser.getEmail());
-
-                if(updatedUser.getPassword()!=null)
-                    user.setPassword(updatedUser.getPassword());
-
-                found =true;
-                break;
-            }
+        if (userToUpdate==null){
+            throw new RuntimeException("User to update is not found.");
         }
 
-        if(!found){
-            System.out.println("User to edit not found.");
-            return;
+        if (updatedUser.getFirstName()!=null){
+            userToUpdate.setFirstName(updatedUser.getFirstName());
         }
 
-        try(BufferedWriter bw=new BufferedWriter(new FileWriter("data/users.txt"))){
-            for (User user:users){
-                String line=user.getUserId()+","
-                        +user.getFirstName()+","
-                        +user.getLastName()+","
-                        +user.getEmail()+","
-                        +user.getPassword()+","
-                        +user.getRole()+","
-                        +user.getBalance()+","
-                        +user.getUserCreatedAt();
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println("Updated users.txt");
+        if (updatedUser.getLastName()!=null){
+            userToUpdate.setLastName(updatedUser.getLastName());
+        }
+
+        if (updatedUser.getEmail()!=null){
+            userToUpdate.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getPassword()!=null){
+            userToUpdate.setPassword(updatedUser.getPassword());
+        }
+
+        try{
+            userDAO.updateUser(userToUpdate);
+            System.out.println("User details updated.");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to update user details. ",e);
         }
     }
 }

@@ -17,7 +17,6 @@ public class PaymentController {
             payment.setAmount(amount);
             payment.setPaymentType(paymentType);
             paymentService.createPayment(payment);
-            System.out.println("payment controller");
             return true;
         } catch (Exception e) {
             e.printStackTrace();

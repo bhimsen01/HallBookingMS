@@ -1,2 +1,3 @@
 U100,bhimsen,basnet,bhimsen@123,bhimsenbasnet,CUSTOMER,0.0,2026-02-28T15:53:16.452748
 U101,Bill,doe,bill@123,johndoej,MANAGER,0.0,2026-02-28T15:54:13.084437600
+U103,vincent,basnet,vincent@123,vincentbasnet,CUSTOMER,0.0,2026-03-05T12:51:27.300163

@@ -18,7 +18,11 @@ public class PaymentService {
     public void createPayment(Payment payment){
         payment.setPaymentId(idCounter.generateId("PAYMENT","P"));
         payment.setPaymentCreatedAt(LocalDateTime.now());
-        paymentDAO.savePayment(payment);
-        System.out.println("payment service");
+        try{
+            paymentDAO.savePayment(payment);
+            System.out.println("payment service");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create payment. ",e);
+        }
     }
 }

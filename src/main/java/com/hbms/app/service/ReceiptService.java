@@ -20,6 +20,11 @@ public class ReceiptService {
         receipt.setReceptID(idCounter.generateId("RECEIPT","R"));
         receipt.setBookingId(bookingId);
         receipt.setReceiptCreatedAt(LocalDateTime.now());
-        receiptDAO.saveReceipt(receipt);
+        try{
+            receiptDAO.saveReceipt(receipt);
+            System.out.println("Receipt generated successfully.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate receipt. ",e);
+        }
     }
 }

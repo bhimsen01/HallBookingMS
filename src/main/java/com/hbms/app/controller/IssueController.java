@@ -10,12 +10,23 @@ public class IssueController {
         this.issueService=issueService;
     }
 
-    public void raiseIssue(Issue issue){
+    public boolean raiseIssue(Issue issue){
         try{
             issueService.raiseIssue(issue);
-            System.out.println("Issue raised successfully.");
+            return true;
         } catch (Exception e) {
-            System.out.println("Failed to raise issue. "+e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean editIssue(String issueId, Issue updatedIssue){
+        try{
+            issueService.editIssue(issueId, updatedIssue);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -1,0 +1,100 @@
+package com.hbms.app.view.board;
+
+import com.hbms.app.dao.UserDAO;
+import com.hbms.app.model.User;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
+
+public class BoardPanel extends JPanel {
+    private UserDAO userDAO;
+    private JPanel container;
+
+    public BoardPanel(com.hbms.app.controller.UserController userController) {
+        setLayout(new BorderLayout());
+        setBackground(new Color(240, 240, 240));
+        userDAO = new UserDAO();
+
+        container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setBackground(new Color(240, 240, 240));
+
+        JScrollPane scrollPane = new JScrollPane(container);
+        scrollPane.setBorder(null);
+        add(scrollPane, BorderLayout.CENTER);
+
+        loadUsers(userController);
+    }
+
+    public void loadUsers(com.hbms.app.controller.UserController userController) {
+        container.removeAll();
+        List<User> users = userDAO.getAllUsers();
+        Collections.reverse(users);
+
+        if (users.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No users found.", SwingConstants.CENTER);
+            emptyLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            container.add(emptyLabel);
+            container.revalidate();
+            container.repaint();
+            return;
+        }
+
+        for (User user : users) {
+            JPanel card = new JPanel(new BorderLayout());
+            card.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            card.setBackground(Color.WHITE);
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
+
+            JPanel infoPanel = new JPanel(new GridLayout(0, 1));
+            infoPanel.setBackground(Color.WHITE);
+            infoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+            infoPanel.add(new JLabel("User ID: " + user.getUserId()));
+            infoPanel.add(new JLabel("Name: " + user.getFirstName() + " " + user.getLastName()));
+            infoPanel.add(new JLabel("Email: " + user.getEmail()));
+            infoPanel.add(new JLabel("Role: " + user.getRole()));
+
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(Color.WHITE);
+
+            JButton btnChangeRole = new JButton("Change Role");
+            JButton btnDelete = new JButton("Delete");
+
+            btnChangeRole.addActionListener(e -> {
+                String[] roles = {"CUSTOMER", "STAFF", "MANAGER"};
+                String selectedRole = (String) JOptionPane.showInputDialog(this, "Select new role:", "Change Role",
+                        JOptionPane.QUESTION_MESSAGE, null, roles, user.getRole().toString());
+                if (selectedRole != null) {
+                    user.setRole(User.Role.valueOf(selectedRole));
+                    userController.updateUserRole(user.getUserId(), new User(null, null, null, null, null, User.Role.valueOf(selectedRole), 0, null));
+                    loadUsers(userController);
+                }
+            });
+
+            btnDelete.addActionListener(e -> {
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete this user?", "Confirm", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    userController.deleteUser(user.getUserId());
+                    loadUsers(userController);
+                    JOptionPane.showMessageDialog(this, "User deleted.");
+                }
+            });
+
+            buttonPanel.add(btnChangeRole);
+            buttonPanel.add(btnDelete);
+
+            card.add(infoPanel, BorderLayout.CENTER);
+            card.add(buttonPanel, BorderLayout.SOUTH);
+
+            container.add(Box.createVerticalStrut(10));
+            container.add(card);
+        }
+
+        container.revalidate();
+        container.repaint();
+    }
+}

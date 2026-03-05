@@ -1,4 +1,6 @@
-package com.hbms.app.view;
+package com.hbms.app.view.initial;
+
+import com.hbms.app.view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;

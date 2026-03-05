@@ -9,14 +9,13 @@ public class ReceiptController {
         this.receiptService=receiptService;
     }
 
-    public String generateReceipt(String bookingId){
+    public boolean generateReceipt(String bookingId){
         try{
             receiptService.generateReceipt(bookingId);
-            System.out.println("Receipt generated successfully.");
-            return "Receipt generated successfully.";
+            return true;
         } catch (Exception e) {
-            System.out.println("Receipt generation failed. "+e.getMessage());
-            return "Receipt generation failed. ";
+            e.printStackTrace();
+            return false;
         }
     }
 }

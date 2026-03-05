@@ -1,12 +1,13 @@
-package com.hbms.app.view;
+package com.hbms.app.view.initial;
 
 import com.hbms.app.controller.UserController;
+import com.hbms.app.view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class SignupPanel extends JPanel {
-    private JLabel lblError;
+    private JLabel lblMessage;
     private final UserController userController;
 
     public SignupPanel(MainFrame frame, UserController userController){
@@ -18,8 +19,8 @@ public class SignupPanel extends JPanel {
         JTextField tfEmail=new JTextField();
         JPasswordField pfPassword=new JPasswordField();
 
-        lblError=new JLabel("");
-        lblError.setForeground(Color.RED);
+        lblMessage=new JLabel("");
+        lblMessage.setForeground(Color.RED);
 
         JButton btnSignup=new JButton("Sign up");
         JButton btnBack=new JButton("Back");
@@ -33,7 +34,7 @@ public class SignupPanel extends JPanel {
         add(new JLabel("Password"));
         add(pfPassword);
 
-        add(lblError);
+        add(lblMessage);
         add(new JLabel(""));
 
         add(btnSignup);
@@ -48,30 +49,30 @@ public class SignupPanel extends JPanel {
             String password=new String(pfPassword.getPassword()).trim();
 
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()){
-                lblError.setText("Error! Empty fields.");
+                lblMessage.setText("Error! Empty fields.");
                 return;
             }
 
             if (!email.contains("@")){
-                lblError.setText("Error! Invalid Email");
+                lblMessage.setText("Error! Invalid Email");
                 return;
             }
 
             if (password.length()<8){
-                lblError.setText("Error! Password must be of 8 characters.");
+                lblMessage.setText("Error! Password must be of 8 characters.");
                 return;
             }
 
-            String result =  userController.signup(firstName, lastName, email, password);
+            boolean result =  userController.signup(firstName, lastName, email, password);
 
-            if (result.equals("Signup successful.")){
-                lblError.setForeground(Color.GREEN);
+            if (result){
+                lblMessage.setForeground(Color.GREEN);
+                lblMessage.setText("Signup successful.");
             }
             else {
-                lblError.setForeground(Color.RED);
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Signup failed.");
             }
-
-            lblError.setText(result);
         });
     }
 }

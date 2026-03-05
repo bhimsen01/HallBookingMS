@@ -4,10 +4,7 @@ import com.hbms.app.model.Booking;
 import com.hbms.app.model.Hall;
 import com.hbms.app.session.Session;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,22 +14,36 @@ import java.util.List;
 public class BookingDAO {
     private final String file="data/bookings.txt";
 
+    private String convertToLine(Booking booking){
+        return booking.getBookingId()+","
+                +booking.getUserId()+","
+                +booking.getHallType()+","
+                +booking.getHallNumber()+","
+                +booking.getBookingDate()+","
+                +booking.getBookingFrom()+","
+                +booking.getBookingUntil()+","
+                +booking.getAmount()+","
+                +booking.getBookingCreatedAt()+","
+                +booking.getBookingStatus();
+    }
+
     public void saveBooking(Booking booking){
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(file,true))){
-            String line=booking.getBookingId()+","
-                    +booking.getUserId()+","
-                    +booking.getHallType()+","
-                    +booking.getHallNumber()+","
-                    +booking.getBookingDate()+","
-                    +booking.getBookingFrom()+","
-                    +booking.getBookingUntil()+","
-                    +booking.getAmount()+","
-                    +booking.getBookingCreatedAt()+","
-                    +booking.getBookingStatus();
-            bw.write(line);
+            bw.write(convertToLine(booking));
             bw.newLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save booking. ",e);
+        }
+    }
+
+    public void saveAllBookings(List<Booking> bookings){
+        try (BufferedWriter bw=new BufferedWriter(new FileWriter(file))){
+            for(Booking booking:bookings){
+                bw.write(convertToLine(booking));
+                bw.newLine();
+            }
+        } catch (IOException e){
+            throw new RuntimeException("Failed to save all bookings. ",e);
         }
     }
 
@@ -47,12 +58,36 @@ public class BookingDAO {
                 bookings.add(booking);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to get all bookings, ",e);
         }
         return bookings;
     }
 
-    public Booking findById(String id){
-        return getAllBookings().stream().filter(booking -> booking.getBookingId().equalsIgnoreCase(id)).findFirst().orElse(null);
+    public List<Booking> getByUserId(String userId){
+        return getAllBookings().stream().filter(booking -> booking.getUserId().equalsIgnoreCase(userId)).toList();
+    }
+
+    public Booking findById(String bookingId){
+        return getAllBookings().stream().filter(booking -> booking.getBookingId().equalsIgnoreCase(bookingId)).findFirst().orElse(null);
+    }
+
+    public void updateBooking(Booking updatedBooking){
+        List<Booking> bookings = getAllBookings();
+
+        boolean found = false;
+
+        for(int i = 0; i < bookings.size(); i++){
+            if(bookings.get(i).getBookingId().equals(updatedBooking.getBookingId())){
+                bookings.set(i, updatedBooking);
+                found = true;
+                break;
+            }
+        }
+
+        if(!found){
+            throw new RuntimeException("Booking to update is not found.");
+        }
+
+        saveAllBookings(bookings);
     }
 }

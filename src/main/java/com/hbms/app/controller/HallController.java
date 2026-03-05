@@ -10,14 +10,33 @@ public class HallController {
         this.hallService=hallService;
     }
 
-    public String addHall(Hall hall){
+    public boolean addHall(Hall hall){
         try{
-            System.out.println("hall controller");
             hallService.addHall(hall);
-            System.out.println("hall controller after calling hall service");
-            return "Hall added successfully.";
+            return true;
         } catch (Exception e) {
-            return "Failed to add hall. "+e.getMessage();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteHall(int hallNumber){
+        try{
+            hallService.deleteHall(hallNumber);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean editHall(int hallNumber, Hall editedHall){
+        try{
+            hallService.editHall(hallNumber, editedHall);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

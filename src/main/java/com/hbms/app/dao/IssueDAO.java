@@ -1,11 +1,9 @@
 package com.hbms.app.dao;
 
 import com.hbms.app.model.Issue;
+import com.hbms.app.model.User;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,22 +11,35 @@ import java.util.List;
 public class IssueDAO {
     private final String file="data/issues.txt";
 
+    private String convertToLine(Issue issue){
+        return issue.getIssueId() + ","
+                + issue.getBookingId() + ","
+                + issue.getRaisedBy() + ","
+                + issue.getDescription() + ","
+                + (issue.getAssignedStaffId() == null ? "" : issue.getAssignedStaffId()) + ","
+                + (issue.getIssueCreatedAt() == null ? "" : issue.getIssueCreatedAt()) + ","
+                + (issue.getIssueResolvedAt() == null ? "" : issue.getIssueResolvedAt()) + ","
+                + (issue.getIssueManagerRemarks() == null ? "" : issue.getIssueManagerRemarks()) + ","
+                + issue.getIssueStatus();
+    }
+
     public void saveIssue(Issue issue){
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(file, true))){
-            String line=issue.getIssueId()+","
-                    +issue.getBookingId()+","
-                    +issue.getRaisedBy()+","
-                    +issue.getDescription()+","
-                    +issue.getAssignedStaffId()+","
-                    +issue.getIssueCreatedAt()+","
-                    +issue.getIssueResolvedAt()+","
-                    +issue.getIssueManagerRemarks()+","
-                    + issue.getIssueStatus();
-            bw.write(line);
+            bw.write(convertToLine(issue));
             bw.newLine();
-            System.out.println("Issue saved successfully.");
-        } catch (Exception e) {
-            System.out.println("Issued saving failed."+e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save issue. ",e);
+        }
+    }
+
+    public void saveAllIssues(List<Issue> issues){
+        try(BufferedWriter bw=new BufferedWriter(new FileWriter(file))){
+            for(Issue issue:issues){
+                bw.write(convertToLine(issue));
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save all issues. ",e);
         }
     }
 
@@ -43,9 +54,28 @@ public class IssueDAO {
                 issues.add(issue);
             }
             return issues;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get all issues. ",e);
         }
+    }
+
+    public void editIssue(Issue updatedIssue){
+        List<Issue> issues=getAllIssues();
+        boolean found=false;
+
+        for (int i=0;i<issues.size();i++){
+            if(issues.get(i).getIssueId().equals(updatedIssue.getIssueId())){
+                issues.set(i, updatedIssue);
+                found=true;
+                break;
+            }
+        }
+
+        if(!found){
+            throw new RuntimeException("Issue not found for update.");
+        }
+
+        saveAllIssues(issues);
     }
 
     public Issue findById(String id){

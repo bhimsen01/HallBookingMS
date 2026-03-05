@@ -1,15 +1,15 @@
-package com.hbms.app.view;
+package com.hbms.app.view.initial;
 
 import com.hbms.app.auth.AuthUser;
 import com.hbms.app.controller.UserController;
-import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
+import com.hbms.app.view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LoginPanel extends JPanel {
-    private JLabel lblError;
+    private JLabel lblMessage;
     private final UserController userController;
 
     public LoginPanel(MainFrame frame, UserController userController){
@@ -19,8 +19,8 @@ public class LoginPanel extends JPanel {
         JTextField tfEmail=new JTextField();
         JPasswordField pfPassword=new JPasswordField();
 
-        lblError=new JLabel("");
-        lblError.setForeground(Color.RED);
+        lblMessage=new JLabel("");
+        lblMessage.setForeground(Color.RED);
 
         JButton btnLogin=new JButton("Login");
         JButton btnBack=new JButton("Back");
@@ -30,7 +30,7 @@ public class LoginPanel extends JPanel {
         add(new JLabel("Password"));
         add(pfPassword);
 
-        add(lblError);
+        add(lblMessage);
         add(new JLabel(""));
 
         add(btnLogin);
@@ -43,12 +43,12 @@ public class LoginPanel extends JPanel {
             String password=new String(pfPassword.getPassword()).trim();
 
             if (email.isEmpty() || password.isEmpty()){
-                lblError.setText("Error! Empty fields.");
+                lblMessage.setText("Error! Empty fields.");
                 return;
             }
 
             if (!email.contains("@")){
-                lblError.setText("Error! Invalid Email");
+                lblMessage.setText("Error! Invalid Email");
                 return;
             }
 
@@ -56,16 +56,18 @@ public class LoginPanel extends JPanel {
 
             try{
                 AuthUser authUser = userController.login(email, password);
-                lblError.setForeground(Color.GREEN);
-                lblError.setText("Login successful.");
+                lblMessage.setForeground(Color.GREEN);
+                lblMessage.setText("Login successful.");
+                tfEmail.setText("");
+                pfPassword.setText("");
 
                 if (authUser!=null){
                     Session.login(authUser);
-                    frame.showScreen("HOME");
+                    frame.showDashboard();
                 }
             } catch (IllegalArgumentException exception){
-                lblError.setForeground(Color.RED);
-                lblError.setText("Incorrect email or password.");
+                lblMessage.setForeground(Color.RED);
+                lblMessage.setText("Incorrect email or password.");
             }
         });
     }
