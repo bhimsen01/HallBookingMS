@@ -8,116 +8,97 @@ import java.awt.*;
 
 public class EditHallDialog extends JDialog {
 
-    private final HallController hallController;
-    private final HallsPanel hallsPanel;
-    private final Hall hall;
-
     public EditHallDialog(JFrame parentFrame, HallController hallController, HallsPanel hallsPanel, Hall hall) {
+
         super(parentFrame, "Edit Hall #" + hall.getHallNumber(), true);
 
-        this.hallController = hallController;
-        this.hallsPanel = hallsPanel;
-        this.hall = hall;
-
-        setSize(500, 600);
+        setSize(500, 500);
         setLocationRelativeTo(parentFrame);
+        setLayout(new GridLayout(9,2,10,10));
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(20,40,0,40)
+        );
 
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
-
-        // Hall Number (read-only)
+        // Fields
         JTextField tfNumber = new JTextField(String.valueOf(hall.getHallNumber()));
         tfNumber.setEditable(false);
-        tfNumber.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
-        // Hall Type (read-only)
         JTextField tfType = new JTextField(hall.getHallType().toString());
         tfType.setEditable(false);
-        tfType.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
-        // Price
-        JTextField tfPrice = new JTextField(String.valueOf(hall.getHallPrice()));
-        tfPrice.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-
-        // Capacity
         JTextField tfCapacity = new JTextField(String.valueOf(hall.getHallCapacity()));
-        tfCapacity.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
+        JTextField tfPrice = new JTextField(String.valueOf(hall.getHallPrice()));
+        JTextField tfRemarks = new JTextField(hall.getHallRemarks());
 
-        // Status dropdown
         JComboBox<Hall.HallStatus> cbStatus = new JComboBox<>(Hall.HallStatus.values());
         cbStatus.setSelectedItem(hall.getHallStatus());
-        cbStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-
-        // Remarks
-        JTextField tfRemarks = new JTextField(hall.getHallRemarks());
-        tfRemarks.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         JButton btnSave = new JButton("Save");
+        btnSave.setBackground(new Color(0, 145, 255));
         JButton btnCancel = new JButton("Cancel");
 
-        btnSave.setPreferredSize(new Dimension(120,40));
-        btnCancel.setPreferredSize(new Dimension(120,40));
+        // ===== Layout =====
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
-        buttonPanel.add(btnSave);
-        buttonPanel.add(btnCancel);
+        add(new JLabel("Hall Number"));
+        add(tfNumber);
 
-        // ===== Build Form =====
-        addField(formPanel,"Hall Number",tfNumber,labelFont);
-        addField(formPanel,"Hall Type",tfType,labelFont);
-        addField(formPanel,"Price",tfPrice,labelFont);
-        addField(formPanel,"Capacity",tfCapacity,labelFont);
-        addField(formPanel,"Status",cbStatus,labelFont);
-        addField(formPanel,"Remarks",tfRemarks,labelFont);
+        add(new JLabel("Hall Type"));
+        add(tfType);
 
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(buttonPanel);
+        add(new JLabel("Capacity"));
+        add(tfCapacity);
 
-        add(formPanel);
+        add(new JLabel("Price"));
+        add(tfPrice);
+
+        add(new JLabel("Status"));
+        add(cbStatus);
+
+        add(new JLabel("Remarks"));
+        add(tfRemarks);
+
+        add(new JLabel(""));
+        add(new JLabel(""));
+
+        add(btnSave);
+        add(btnCancel);
+
+        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 
         btnSave.addActionListener(e -> {
             try {
-                double price = Double.parseDouble(tfPrice.getText().trim());
+
                 int capacity = Integer.parseInt(tfCapacity.getText().trim());
+                double price = Double.parseDouble(tfPrice.getText().trim());
                 Hall.HallStatus status = (Hall.HallStatus) cbStatus.getSelectedItem();
                 String remarks = tfRemarks.getText().trim();
 
                 Hall updatedHall = new Hall();
-                updatedHall.setHallPrice(price);
                 updatedHall.setHallCapacity(capacity);
+                updatedHall.setHallPrice(price);
                 updatedHall.setHallStatus(status);
                 updatedHall.setHallRemarks(remarks);
 
-                boolean msg = hallController.editHall(hall.getHallNumber(), updatedHall);
-                JOptionPane.showMessageDialog(this, msg);
-                hallsPanel.loadHalls();
-                dispose();
+                boolean success = hallController.editHall(hall.getHallNumber(), updatedHall);
 
-            } catch (NumberFormatException nfe) {
-                JOptionPane.showMessageDialog(this, "Please enter valid numbers for price and capacity.");
+                if(success){
+                    JOptionPane.showMessageDialog(this,"Hall updated successfully!");
+                    hallsPanel.loadHalls();
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this,"Failed to update hall.");
+                }
+
+            } catch (Exception ex){
+                JOptionPane.showMessageDialog(this,
+                        "Invalid input.\nCapacity must be integer.\nPrice must be a number.");
             }
         });
 
         setVisible(true);
     }
-
-    private void addField(JPanel panel, String label, Component field, Font font) {
-
-        JLabel lbl = new JLabel(label);
-        lbl.setFont(font);
-        lbl.setHorizontalAlignment(SwingConstants.LEFT);
-        lbl.setMaximumSize(new Dimension(Integer.MAX_VALUE, lbl.getPreferredSize().height));
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-
-        panel.add(lbl);
-        panel.add(Box.createVerticalStrut(4));
-        panel.add(field);
-        panel.add(Box.createVerticalStrut(12));
-    }
 }
+

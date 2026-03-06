@@ -24,7 +24,9 @@ public class SignupPanel extends JPanel {
 
         // Title
         JLabel lblTitle = new JLabel("Create Your Account");
-        lblTitle.setFont(new Font("Inter", Font.BOLD, 24));
+        Font currentFont = lblTitle.getFont();
+        Font newFont = currentFont.deriveFont(28f);
+        lblTitle.setFont(newFont);
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -84,6 +86,7 @@ public class SignupPanel extends JPanel {
         JButton btnBack = new JButton("Cancel");
 
         btnSignup.setPreferredSize(new Dimension(120, 40));
+        btnSignup.setBackground(new Color(0, 145, 255));
         btnBack.setPreferredSize(new Dimension(120, 40));
 
         buttonPanel.add(btnSignup);
@@ -104,19 +107,19 @@ public class SignupPanel extends JPanel {
             String password = new String(pfPassword.getPassword()).trim();
 
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Empty fields.");
                 return;
             }
 
             if (!email.contains("@")) {
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Invalid Email");
                 return;
             }
 
             if (password.length() < 8) {
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Password must be at least 8 characters.");
                 return;
             }
@@ -124,10 +127,10 @@ public class SignupPanel extends JPanel {
             boolean result = userController.signup(firstName, lastName, email, password);
 
             if (result) {
-                lblMessage.setForeground(Color.GREEN);
+                lblMessage.setForeground(new Color(48, 209,88));
                 lblMessage.setText("Signup successful.");
             } else {
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Signup failed.");
             }
         });

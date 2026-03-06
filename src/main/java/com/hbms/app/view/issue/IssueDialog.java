@@ -9,51 +9,71 @@ import java.awt.*;
 public class IssueDialog extends JDialog {
 
     public IssueDialog(JFrame parentFrame, String bookingId, IssueController issueController, Runnable onSuccess) {
+
         super(parentFrame, "Raise Issue", true);
+
         setSize(500, 400);
         setLocationRelativeTo(parentFrame);
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
 
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
-
+        // ===== Booking ID =====
+        JPanel bookingPanel = new JPanel(new BorderLayout(10,10));
+        JLabel lblBooking = new JLabel("Booking ID");
         JTextField tfBookingId = new JTextField(bookingId);
         tfBookingId.setEditable(false);
-        tfBookingId.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        tfBookingId.setPreferredSize(new Dimension(200,30));
+
+        bookingPanel.add(lblBooking, BorderLayout.WEST);
+        bookingPanel.add(tfBookingId, BorderLayout.CENTER);
+
+        // ===== Description =====
+        JPanel descPanel = new JPanel(new BorderLayout(10,10));
+        JLabel lblDesc = new JLabel("Description");
 
         JTextArea taDesc = new JTextArea();
         taDesc.setLineWrap(true);
         taDesc.setWrapStyleWord(true);
+
         JScrollPane scroll = new JScrollPane(taDesc);
-        scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        scroll.setPreferredSize(new Dimension(200,120)); // bigger textarea
+
+        descPanel.add(lblDesc, BorderLayout.NORTH);
+        descPanel.add(scroll, BorderLayout.CENTER);
+
+        // ===== Buttons =====
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,10));
 
         JButton btnSubmit = new JButton("Submit");
+        btnSubmit.setBackground(new Color(0,145,255));
+        btnSubmit.setPreferredSize(new Dimension(120,35));
+
         JButton btnCancel = new JButton("Cancel");
+        btnCancel.setPreferredSize(new Dimension(120,35));
 
-        btnSubmit.setPreferredSize(new Dimension(120,40));
-        btnCancel.setPreferredSize(new Dimension(120,40));
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
         buttonPanel.add(btnSubmit);
         buttonPanel.add(btnCancel);
 
-        // ===== Build Form =====
-        addField(formPanel, "Booking ID", tfBookingId, labelFont);
-        addField(formPanel, "Description", scroll, labelFont);
+        // ===== Add to main =====
+        mainPanel.add(bookingPanel);
+        mainPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(descPanel);
+        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(buttonPanel);
 
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(buttonPanel);
+        add(mainPanel);
 
-        add(formPanel);
-
+        // ===== Actions =====
         btnCancel.addActionListener(e -> dispose());
 
         btnSubmit.addActionListener(e -> {
+
             String desc = taDesc.getText().trim();
-            if (desc.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter issue description.");
+
+            if(desc.isEmpty()){
+                JOptionPane.showMessageDialog(this,"Please enter issue description.");
                 return;
             }
 
@@ -62,26 +82,20 @@ public class IssueDialog extends JDialog {
             issue.setDescription(desc);
 
             issueController.raiseIssue(issue);
-            JOptionPane.showMessageDialog(this, "Issue submitted.");
-            if (onSuccess!=null) {
-                try { onSuccess.run(); } catch (Exception ex) { ex.printStackTrace(); }
+
+            JOptionPane.showMessageDialog(this,"Issue submitted.");
+
+            if(onSuccess != null){
+                try{
+                    onSuccess.run();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
+
             dispose();
         });
 
         setVisible(true);
-    }
-
-    private void addField(JPanel panel, String label, Component field, Font font) {
-        JLabel lbl = new JLabel(label);
-        lbl.setFont(font);
-        lbl.setHorizontalAlignment(SwingConstants.LEFT);
-        lbl.setMaximumSize(new Dimension(Integer.MAX_VALUE, lbl.getPreferredSize().height));
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        panel.add(lbl);
-        panel.add(Box.createVerticalStrut(4));
-        panel.add(field);
-        panel.add(Box.createVerticalStrut(12));
     }
 }

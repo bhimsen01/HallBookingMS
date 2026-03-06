@@ -24,8 +24,11 @@ public class LoginPanel extends JPanel {
         gbc.insets = new Insets(8, 0, 8, 0);
 
         // Title
-        JLabel lblTitle = new JLabel("Log in with your account");
-        lblTitle.setFont(new Font("Inter", Font.BOLD, 24));
+        JLabel lblTitle = new JLabel("Log in Your Account");
+        Font currentFont = lblTitle.getFont();
+        Font newFont = currentFont.deriveFont(28f);
+        lblTitle.setFont(newFont);
+
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -65,6 +68,7 @@ public class LoginPanel extends JPanel {
         JButton btnBack=new JButton("Cancel");
 
         btnLogin.setPreferredSize(new Dimension(120, 40));
+        btnLogin.setBackground(new Color(0, 145, 255));
         btnBack.setPreferredSize(new Dimension(120, 40));
 
         buttonPanel.add(btnLogin);
@@ -81,13 +85,13 @@ public class LoginPanel extends JPanel {
             String password=new String(pfPassword.getPassword()).trim();
 
             if (email.isEmpty() || password.isEmpty()){
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Empty fields.");
                 return;
             }
 
             if (!email.contains("@")){
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Invalid email.");
                 return;
             }
@@ -96,7 +100,7 @@ public class LoginPanel extends JPanel {
 
             try{
                 AuthUser authUser = userController.login(email, password);
-                lblMessage.setForeground(Color.GREEN);
+                lblMessage.setForeground(new Color(48, 209,88));
                 lblMessage.setText("Login successful.");
                 tfEmail.setText("");
                 pfPassword.setText("");
@@ -106,7 +110,7 @@ public class LoginPanel extends JPanel {
                     frame.showDashboard();
                 }
             } catch (IllegalArgumentException exception){
-                lblMessage.setForeground(Color.RED);
+                lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Incorrect email or password.");
             }
         });

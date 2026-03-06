@@ -61,8 +61,6 @@ public class HallsPanel extends JPanel {
         List<Hall> halls = hallDAO.getAllHalls();
         Collections.reverse(halls);
 
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
-
         for (Hall hall : halls) {
 
             JPanel card = new JPanel() {
@@ -79,7 +77,7 @@ public class HallsPanel extends JPanel {
             card.setLayout(new BorderLayout());
             card.setOpaque(false);
             card.setBorder(new EmptyBorder(15,15,15,15));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 170));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 280));
 
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
             infoPanel.setOpaque(false);
@@ -89,18 +87,21 @@ public class HallsPanel extends JPanel {
             JLabel capacity = new JLabel("Capacity: " + hall.getHallCapacity());
             JLabel price = new JLabel("Price: RM " + hall.getHallPrice());
             JLabel status = new JLabel("Status: " + hall.getHallStatus());
+            JLabel availableFrom = new JLabel("Available From: " + hall.getHallAvailableFrom());
+            JLabel availableUntil = new JLabel("Available Until: " + hall.getHallAvailableUntil());
 
-            JLabel[] labels = {type, number, capacity, price, status};
+            JLabel[] labels = {type, number, capacity, price, status, availableFrom, availableUntil};
 
             for (JLabel lbl : labels) {
                 lbl.setForeground(Color.WHITE);
-                lbl.setFont(labelFont);
                 infoPanel.add(lbl);
+                infoPanel.add(Box.createVerticalStrut(6));
             }
 
             JButton bookButton = new JButton("Book Now");
             JButton editButton = new JButton("Edit");
             JButton deleteButton = new JButton("Delete");
+            deleteButton.setBackground(new Color(255, 66, 69));
 
             if (hall.getHallStatus() != Hall.HallStatus.AVAILABLE) {
                 bookButton.setEnabled(false);

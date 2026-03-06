@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="HallBookingMS:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/HallBookingMS_jar</output-path>
+    <root id="archive" name="HallBookingMS.jar">
+      <element id="module-output" name="HallBookingMS" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.7/flatlaf-3.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-extras/3.7/flatlaf-extras-3.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/weisj/jsvg/2.0.0/jsvg-2.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

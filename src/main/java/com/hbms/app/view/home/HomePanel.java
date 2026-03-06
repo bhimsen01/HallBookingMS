@@ -13,8 +13,10 @@ public class HomePanel extends JPanel {
 
         // ===== Title =====
         JLabel lblTitle = new JLabel("Hall Symphony Booking System");
-        lblTitle.setFont(new Font("Inter", Font.BOLD, 28));
-        lblTitle.setForeground(Color.WHITE);
+        Font currentFont = lblTitle.getFont();
+        Font newFont = currentFont.deriveFont(28f);
+        lblTitle.setFont(newFont);
+        lblTitle.setForeground(new Color(245, 245, 247));
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         add(lblTitle, BorderLayout.NORTH);
 
@@ -52,7 +54,7 @@ public class HomePanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(50,50,80));
+                g2.setColor(new Color(50,50,100));
                 g2.fillRoundRect(0,0,getWidth(),getHeight(), radius, radius);
                 g2.dispose();
                 super.paintComponent(g);
@@ -64,13 +66,11 @@ public class HomePanel extends JPanel {
         card.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setFont(new Font("Inter", Font.BOLD, 16));
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblDesc = new JLabel("<html><body style='text-align:center'>" + desc + "</body></html>");
-        lblDesc.setFont(new Font("Inter", Font.PLAIN, 14));
-        lblDesc.setForeground(Color.LIGHT_GRAY);
+        lblDesc.setForeground(new Color(200, 200, 205));
         lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         card.add(lblTitle);

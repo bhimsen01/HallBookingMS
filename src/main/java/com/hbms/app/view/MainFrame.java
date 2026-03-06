@@ -95,9 +95,6 @@ public class MainFrame extends JFrame {
             UIManager.put("Button.margin", new Insets(8,16,8,16));
             UIManager.put("Component.focusWidth", 1);
 
-            UIManager.put("TitlePane.background", new Color(30, 30, 60));
-            UIManager.put("TitlePane.foreground", Color.WHITE);
-
             // Accent color (Windows 11 style blue)
             Color accent = new Color(0,145,255);
             UIManager.put("Component.focusColor", accent);
@@ -107,7 +104,7 @@ public class MainFrame extends JFrame {
             Font interVariable = Font.createFont(
                     Font.TRUETYPE_FONT,
                     MainFrame.class.getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf")
-            ).deriveFont(14f);
+            ).deriveFont(Font.BOLD, 14f);
 
             UIManager.put("defaultFont", interVariable);
 

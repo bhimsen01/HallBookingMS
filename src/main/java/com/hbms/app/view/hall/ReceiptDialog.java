@@ -20,26 +20,27 @@ public class ReceiptDialog extends JDialog {
         formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
-        Font titleFont = new Font("Inter", Font.BOLD, 16);
 
         JLabel lblTitle = new JLabel("Booking Successful!");
-        lblTitle.setFont(titleFont);
+        Font currentFont = lblTitle.getFont();
+        Font newFont = currentFont.deriveFont(16f);
+        lblTitle.setFont(newFont);
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         formPanel.add(lblTitle);
         formPanel.add(Box.createVerticalStrut(15));
 
-        addField(formPanel, "Receipt ID", new JLabel(receipt.getReceptID()), labelFont);
-        addField(formPanel, "Hall Number", new JLabel(String.valueOf(booking.getHallNumber())), labelFont);
-        addField(formPanel, "Hall Type", new JLabel(booking.getHallType().toString()), labelFont);
-        addField(formPanel, "Booking Date", new JLabel(booking.getBookingDate().toString()), labelFont);
-        addField(formPanel, "Booked From", new JLabel(booking.getBookingFrom().toString()), labelFont);
-        addField(formPanel, "Booked Until", new JLabel(booking.getBookingUntil().toString()), labelFont);
-        addField(formPanel, "Booked By", new JLabel(user.getFirstName() + " " + user.getLastName()), labelFont);
-        addField(formPanel, "Receipt Generated", new JLabel(receipt.getReceiptCreatedAt().format(dtf)), labelFont);
+        addField(formPanel, "Receipt ID", new JLabel(receipt.getReceptID()));
+        addField(formPanel, "Hall Number", new JLabel(String.valueOf(booking.getHallNumber())));
+        addField(formPanel, "Hall Type", new JLabel(booking.getHallType().toString()));
+        addField(formPanel, "Booking Date", new JLabel(booking.getBookingDate().toString()));
+        addField(formPanel, "Booked From", new JLabel(booking.getBookingFrom().toString()));
+        addField(formPanel, "Booked Until", new JLabel(booking.getBookingUntil().toString()));
+        addField(formPanel, "Booked By", new JLabel(user.getFirstName() + " " + user.getLastName()));
+        addField(formPanel, "Receipt Generated", new JLabel(receipt.getReceiptCreatedAt().format(dtf)));
 
         JButton btnClose = new JButton("Okay");
+        btnClose.setBackground(new Color(0, 145, 255));
         btnClose.setPreferredSize(new Dimension(120,40));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(btnClose);
@@ -54,17 +55,14 @@ public class ReceiptDialog extends JDialog {
         setVisible(true);
     }
 
-    private void addField(JPanel panel, String label, JLabel valueLabel, Font font) {
+    private void addField(JPanel panel, String label, JLabel valueLabel) {
         JLabel lbl = new JLabel(label);
-        lbl.setFont(font);
-        lbl.setForeground(Color.BLACK);
 
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(false);
         row.add(lbl, BorderLayout.WEST);
         row.add(valueLabel, BorderLayout.EAST);
-        valueLabel.setFont(font);
-        valueLabel.setForeground(new Color(50,50,100));
+
 
         panel.add(row);
         panel.add(Box.createVerticalStrut(8));

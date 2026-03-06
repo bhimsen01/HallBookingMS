@@ -17,11 +17,14 @@ public class HallBookingDialog extends JDialog {
     private JLabel lblMessage;
 
     public HallBookingDialog(JFrame parentFrame, Hall hall, BookingController bookingController, ReceiptController receiptController, Runnable onSuccess) {
-        super(parentFrame, "Book Hall #" + hall.getHallNumber(), true); // true = modal
+        super(parentFrame, "Book Hall " + hall.getHallNumber(), true); // true = modal
 
         setSize(350, 300);
         setLocationRelativeTo(parentFrame);
         setLayout(new GridLayout(6,2,10,10));
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(20,40,20,40)
+        );
 
         JTextField tfDate = new JTextField("2025-03-05");
         JTextField tfFrom = new JTextField("09:00");
@@ -30,10 +33,11 @@ public class HallBookingDialog extends JDialog {
         tfAmount.setEditable(false);
 
         JButton btnBook = new JButton("Book");
+        btnBook.setBackground(new Color(0, 145, 255));
         JButton btnCancel = new JButton("Cancel");
 
         lblMessage=new JLabel("");
-        lblMessage.setForeground(Color.RED);
+        lblMessage.setForeground(new Color(255, 69,69));
 
         add(new JLabel("Date (YYYY-MM-DD):"));
         add(tfDate);

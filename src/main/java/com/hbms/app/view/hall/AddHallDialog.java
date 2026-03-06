@@ -13,83 +13,65 @@ import java.util.Date;
 
 public class AddHallDialog extends JDialog {
 
-    private final HallController hallController;
-    private final HallsPanel hallsPanel;
-
     public AddHallDialog(JFrame parentFrame, HallController hallController, HallsPanel hallsPanel) {
+
         super(parentFrame, "Add Hall", true);
 
-        this.hallController = hallController;
-        this.hallsPanel = hallsPanel;
-
-        setSize(500, 600);
+        setSize(500, 500);
         setLocationRelativeTo(parentFrame);
+        setLayout(new GridLayout(9,2,10,10));
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(20,40,0,40)
+        );
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
-
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
         JTextField tfNumber = new JTextField();
         JTextField tfCapacity = new JTextField();
         JTextField tfPrice = new JTextField();
         JTextField tfRemarks = new JTextField();
 
-        tfNumber.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-        tfCapacity.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-        tfPrice.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-        tfRemarks.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
-
-        // ===== Hall Type =====
-        JRadioButton rbAuditorium = new JRadioButton("AUDITORIUM", true);
-        JRadioButton rbBoardroom = new JRadioButton("BOARDROOM");
-        JRadioButton rbBanquet = new JRadioButton("BANQUET");
-
-        ButtonGroup bgType = new ButtonGroup();
-        bgType.add(rbAuditorium);
-        bgType.add(rbBoardroom);
-        bgType.add(rbBanquet);
-
-        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,10,0));
-        radioPanel.add(rbAuditorium);
-        radioPanel.add(rbBoardroom);
-        radioPanel.add(rbBanquet);
+        JComboBox<Hall.HallType> cbHallType = new JComboBox<>(Hall.HallType.values());
 
         // ===== Time Spinners =====
         SpinnerDateModel fromModel = new SpinnerDateModel();
         JSpinner spFrom = new JSpinner(fromModel);
         spFrom.setEditor(new JSpinner.DateEditor(spFrom,"HH:mm"));
-        spFrom.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         SpinnerDateModel untilModel = new SpinnerDateModel();
         JSpinner spUntil = new JSpinner(untilModel);
         spUntil.setEditor(new JSpinner.DateEditor(spUntil,"HH:mm"));
-        spUntil.setMaximumSize(new Dimension(Integer.MAX_VALUE,30));
 
         JButton btnAdd = new JButton("Add Hall");
+        btnAdd.setBackground(new Color(0, 145, 255));
         JButton btnCancel = new JButton("Cancel");
 
-        btnAdd.setPreferredSize(new Dimension(120,40));
-        btnCancel.setPreferredSize(new Dimension(120,40));
+        // ===== Layout =====
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
-        buttonPanel.add(btnAdd);
-        buttonPanel.add(btnCancel);
+        add(new JLabel("Hall Number"));
+        add(tfNumber);
 
-        // ===== Build Form =====
-        addField(formPanel,"Hall Number",tfNumber,labelFont);
-        addField(formPanel,"Hall Type",radioPanel,labelFont);
-        addField(formPanel,"Capacity",tfCapacity,labelFont);
-        addField(formPanel,"Price",tfPrice,labelFont);
-        addField(formPanel,"Available From",spFrom,labelFont);
-        addField(formPanel,"Available Until",spUntil,labelFont);
-        addField(formPanel,"Remarks",tfRemarks,labelFont);
+        add(new JLabel("Hall Type"));
+        add(cbHallType);
 
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(buttonPanel);
+        add(new JLabel("Capacity"));
+        add(tfCapacity);
 
-        add(formPanel);
+        add(new JLabel("Price"));
+        add(tfPrice);
+
+        add(new JLabel("Available From"));
+        add(spFrom);
+
+        add(new JLabel("Available Until"));
+        add(spUntil);
+
+        add(new JLabel("Remarks"));
+        add(tfRemarks);
+
+        add(btnAdd);
+        add(btnCancel);
+
+        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 
@@ -100,10 +82,7 @@ public class AddHallDialog extends JDialog {
                 int capacity = Integer.parseInt(tfCapacity.getText().trim());
                 double price = Double.parseDouble(tfPrice.getText().trim());
 
-                Hall.HallType type =
-                        rbAuditorium.isSelected() ? Hall.HallType.AUDITORIUM :
-                                rbBoardroom.isSelected() ? Hall.HallType.BOARDROOM :
-                                        Hall.HallType.BANQUET;
+                Hall.HallType type = (Hall.HallType) cbHallType.getSelectedItem();
 
                 Date fromDate = (Date) spFrom.getValue();
                 LocalTime availableFrom = Instant.ofEpochMilli(fromDate.getTime())
@@ -127,13 +106,14 @@ public class AddHallDialog extends JDialog {
                         LocalDateTime.now()
                 );
 
-                boolean message = hallController.addHall(hall);
+                boolean success = hallController.addHall(hall);
 
-                JOptionPane.showMessageDialog(this,message);
-
-                if(message){
+                if(success){
+                    JOptionPane.showMessageDialog(this,"Hall added successfully!");
                     hallsPanel.loadHalls();
                     dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this,"Failed to add hall.");
                 }
 
             } catch (Exception ex){
@@ -144,13 +124,5 @@ public class AddHallDialog extends JDialog {
 
         setVisible(true);
     }
-
-    private void addField(JPanel panel,String label,Component field,Font font){
-        JLabel lbl = new JLabel(label);
-        lbl.setFont(font);
-
-        panel.add(lbl);
-        panel.add(field);
-        panel.add(Box.createVerticalStrut(10));
-    }
 }
+

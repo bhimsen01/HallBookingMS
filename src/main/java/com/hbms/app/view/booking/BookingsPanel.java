@@ -39,7 +39,9 @@ public class BookingsPanel extends JPanel {
 
         if (myBookings.isEmpty()) {
             JLabel emptyLabel = new JLabel("No bookings found.", SwingConstants.CENTER);
-            emptyLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            Font currentFont = emptyLabel.getFont();
+            Font newFont = currentFont.deriveFont(16f);
+            emptyLabel.setFont(newFont);
             add(emptyLabel, BorderLayout.CENTER);
             return;
         }
@@ -61,12 +63,10 @@ public class BookingsPanel extends JPanel {
             card.setLayout(new BorderLayout());
             card.setOpaque(false);
             card.setBorder(new EmptyBorder(15,15,15,15));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 170));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 240));
 
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
             infoPanel.setOpaque(false);
-
-            Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
             JLabel hallType = new JLabel("Hall Type: " + booking.getHallType());
             JLabel hallNumber = new JLabel("Hall Number: " + booking.getHallNumber());
@@ -80,8 +80,8 @@ public class BookingsPanel extends JPanel {
 
             for (JLabel lbl : labels) {
                 lbl.setForeground(Color.WHITE);
-                lbl.setFont(labelFont);
                 infoPanel.add(lbl);
+                infoPanel.add(Box.createVerticalStrut(6));
             }
 
             // 🔥 BUTTON PANEL
@@ -89,6 +89,7 @@ public class BookingsPanel extends JPanel {
             buttonPanel.setOpaque(false);
 
             JButton btnCancel = new JButton("Cancel");
+            btnCancel.setBackground(new Color(255, 66, 69));
             JButton btnIssue = new JButton("Raise Issue");
 
             // Disable cancel if already cancelled
