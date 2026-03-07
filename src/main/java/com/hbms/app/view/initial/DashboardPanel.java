@@ -48,7 +48,7 @@ public class DashboardPanel extends JPanel {
         bookingsPanel = new BookingsPanel(mainFrame, bookingController, issueController);
         contentPanel.add(bookingsPanel, "BOOKINGS");
 
-        issuesPanel = new IssuesPanel(issueController);
+        issuesPanel = new IssuesPanel(mainFrame, issueController);
         contentPanel.add(issuesPanel, "ISSUES");
         contentPanel.add(new AnalyticsPanel(), "ANALYTICS");
         contentPanel.add(new BoardPanel(userController), "BOARD");

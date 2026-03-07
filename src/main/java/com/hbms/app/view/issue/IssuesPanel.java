@@ -1,7 +1,9 @@
 package com.hbms.app.view.issue;
 
+import com.hbms.app.controller.IssueController;
 import com.hbms.app.dao.IssueDAO;
 import com.hbms.app.model.Issue;
+import com.hbms.app.session.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,10 +12,10 @@ import java.util.List;
 
 public class IssuesPanel extends JPanel {
     private IssueDAO issueDAO;
+    private IssueController issueController;
     private JPanel container;
-    private com.hbms.app.controller.IssueController issueController;
 
-    public IssuesPanel(com.hbms.app.controller.IssueController issueController) {
+    public IssuesPanel(JFrame parentFrame, IssueController issueController) {
         setLayout(new BorderLayout());
         this.issueController = issueController;
         issueDAO = new IssueDAO();
@@ -31,18 +33,21 @@ public class IssuesPanel extends JPanel {
 
     public void loadIssues() {
         container.removeAll();
-        List<Issue> issues = issueDAO.getAllIssues();
+        String userId = Session.getCurrentUser().getUserId();
+        List<Issue> myIssues = issueDAO.getByUserId(userId);
 
-        if (issues.isEmpty()) {
+        if (myIssues.isEmpty()) {
             JLabel emptyLabel = new JLabel("No issues found.", SwingConstants.CENTER);
-            emptyLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            Font currentFont = emptyLabel.getFont();
+            Font newFont = currentFont.deriveFont(16f);
+            emptyLabel.setFont(newFont);
             container.add(emptyLabel);
             container.revalidate();
             container.repaint();
             return;
         }
 
-        for (Issue issue : issues) {
+        for (Issue issue : myIssues) {
             JPanel card = new JPanel() {
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
@@ -57,12 +62,11 @@ public class IssuesPanel extends JPanel {
             card.setLayout(new BorderLayout());
             card.setOpaque(false);
             card.setBorder(new EmptyBorder(15,15,15,15));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
 
             JPanel infoPanel = new JPanel(new GridLayout(0, 1));
             infoPanel.setOpaque(false);
 
-            Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
             JLabel issueId = new JLabel("Issue ID: " + issue.getIssueId());
             JLabel bookingId = new JLabel("Booking ID: " + issue.getBookingId());
@@ -73,19 +77,16 @@ public class IssuesPanel extends JPanel {
 
             for (JLabel lbl : labels) {
                 lbl.setForeground(Color.WHITE);
-                lbl.setFont(labelFont);
+                infoPanel.add(lbl);
+                infoPanel.add(Box.createVerticalStrut(6));
             }
-
-            infoPanel.add(issueId);
-            infoPanel.add(bookingId);
-            infoPanel.add(description);
-            infoPanel.add(status);
 
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             buttonPanel.setOpaque(false);
 
             JButton btnEdit = new JButton("Edit");
             JButton btnCancel = new JButton("Cancel Issue");
+            btnCancel.setBackground(new Color(255, 66, 69));
 
             if (issue.getIssueStatus() == Issue.IssueStatus.CANCELLED || issue.getIssueStatus() == Issue.IssueStatus.RESOLVED) {
                 btnCancel.setEnabled(false);

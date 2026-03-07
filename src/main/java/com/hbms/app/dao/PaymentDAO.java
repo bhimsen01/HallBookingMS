@@ -33,6 +33,9 @@ public class PaymentDAO {
         try(BufferedReader br=new BufferedReader(new FileReader(file))){
             String line;
             while((line=br.readLine())!=null){
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO |  getAllPayments");
+                    continue;}
                 String[] parts=line.split(",");
                 Payment payment=new Payment(parts[0], parts[1], Double.parseDouble(parts[2]), Payment.PaymentType.valueOf(parts[3]), LocalDateTime.parse(parts[4]));
                 payments.add(payment);

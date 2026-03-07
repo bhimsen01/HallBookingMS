@@ -28,6 +28,7 @@ public class StartPanel extends JPanel {
 
         // Optional: set preferred size for consistency
         btnLogin.setPreferredSize(new Dimension(120, 40));
+        btnLogin.setBackground(new Color(0,145,255));
         btnSignup.setPreferredSize(new Dimension(120, 40));
 
         Font baseFont = UIManager.getFont("defaultFont");

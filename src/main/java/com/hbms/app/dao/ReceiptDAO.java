@@ -31,6 +31,9 @@ public class ReceiptDAO {
         try(BufferedReader br=new BufferedReader(new FileReader(file))){
             String line;
             while ((line= br.readLine())!=null){
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO | getAllReceipts");
+                    continue;}
                 String[] parts=line.split(",");
                 Receipt receipt=new Receipt(parts[0], parts[1], LocalDateTime.parse(parts[2]));
                 receipts.add(receipt);

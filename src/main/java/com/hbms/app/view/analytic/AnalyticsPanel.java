@@ -32,7 +32,7 @@ public class AnalyticsPanel extends JPanel {
         // Analytics cards
         JPanel analyticsPanel = new JPanel();
         analyticsPanel.setLayout(new GridLayout(2, 2, 15, 15));
-        analyticsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        analyticsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
 
         analyticsPanel.add(createAnalyticsBox("Total Bookings", getTotalBookings()));
         analyticsPanel.add(createAnalyticsBox("This Month Sales", getMonthlyRevenue()));
@@ -45,7 +45,7 @@ public class AnalyticsPanel extends JPanel {
         // Additional stats
         JPanel statsPanel = new JPanel();
         statsPanel.setLayout(new GridLayout(1, 3, 15, 15));
-        statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
         statsPanel.add(createAnalyticsBox("Confirmed Bookings", getConfirmedBookings()));
         statsPanel.add(createAnalyticsBox("Cancelled Bookings", getCancelledBookings()));
@@ -80,15 +80,13 @@ public class AnalyticsPanel extends JPanel {
         JPanel infoPanel = new JPanel(new GridLayout(0, 1));
         infoPanel.setOpaque(false);
 
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
-        Font titleFont = new Font("Inter", Font.BOLD, 18);
-
         JLabel accountNameLabel = new JLabel("Account: " + accountService.getSymphonyAccNme());
-        accountNameLabel.setFont(titleFont);
+        Font currentFont = accountNameLabel.getFont();
+        Font newFont = currentFont.deriveFont(18f);
+        accountNameLabel.setFont(newFont);
         accountNameLabel.setForeground(Color.WHITE);
 
         JLabel balanceLabel = new JLabel("Balance: RM " + String.format("%.2f", accountService.getBalance()));
-        balanceLabel.setFont(labelFont);
         balanceLabel.setForeground(new Color(200, 200, 255));
 
         infoPanel.add(accountNameLabel);
@@ -116,15 +114,13 @@ public class AnalyticsPanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        Font titleFont = new Font("Inter", Font.PLAIN, 12);
-        Font valueFont = new Font("Inter", Font.BOLD, 24);
-
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(titleFont);
         titleLabel.setForeground(new Color(200, 200, 255));
 
         JLabel valueLabel = new JLabel(value, SwingConstants.CENTER);
-        valueLabel.setFont(valueFont);
+        Font currentFont = valueLabel.getFont();
+        Font newFont = currentFont.deriveFont(24f);
+        valueLabel.setFont(newFont);
         valueLabel.setForeground(Color.WHITE);
 
         panel.add(titleLabel, BorderLayout.NORTH);

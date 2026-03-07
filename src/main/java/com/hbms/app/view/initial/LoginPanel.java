@@ -78,7 +78,12 @@ public class LoginPanel extends JPanel {
         gbc.insets = new Insets(20, 0, 0, 0);
         add(buttonPanel, gbc);
 
-        btnBack.addActionListener(e-> frame.showScreen("START"));
+        btnBack.addActionListener(e-> {
+
+            tfEmail.setText("");
+            pfPassword.setText("");
+            lblMessage.setText("");
+            frame.showScreen("START");});
 
         btnLogin.addActionListener(e-> {
             String email=tfEmail.getText().trim();
@@ -96,17 +101,19 @@ public class LoginPanel extends JPanel {
                 return;
             }
 
-            System.out.println("Login clicked: "+email);
-
             try{
                 AuthUser authUser = userController.login(email, password);
                 lblMessage.setForeground(new Color(48, 209,88));
-                lblMessage.setText("Login successful.");
+                System.out.println("Login successful. "+email);
                 tfEmail.setText("");
                 pfPassword.setText("");
+                lblMessage.setText("");
 
                 if (authUser!=null){
                     Session.login(authUser);
+                    tfEmail.setText("");
+                    pfPassword.setText("");
+                    lblMessage.setText("");
                     frame.showDashboard();
                 }
             } catch (IllegalArgumentException exception){

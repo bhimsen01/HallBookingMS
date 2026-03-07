@@ -53,6 +53,9 @@ public class BookingDAO {
         try (BufferedReader br=new BufferedReader(new FileReader(file))){
             String line;
             while ((line=br.readLine())!=null){
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO | getAllBookings");
+                    continue;}
                 String[] parts=line.split(",");
                 Booking booking=new Booking(parts[0], parts[1], Hall.HallType.valueOf(parts[2]), Integer.parseInt(parts[3]), LocalDate.parse(parts[4]), LocalTime.parse(parts[5]), LocalTime.parse(parts[6]), Double.parseDouble(parts[7]), LocalDateTime.parse(parts[8]), Booking.BookingStatus.valueOf(parts[9]));
                 bookings.add(booking);

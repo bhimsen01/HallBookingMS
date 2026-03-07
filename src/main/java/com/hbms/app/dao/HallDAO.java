@@ -50,6 +50,9 @@ public class HallDAO {
         try(BufferedReader br=new BufferedReader(new FileReader(file))){
             String line;
             while ((line=br.readLine())!=null){
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO | getAllHalls");
+                    continue;}
                 String[] parts=line.split(",");
                 Hall hall= new Hall(Integer.parseInt(parts[0]),Hall.HallType.valueOf(parts[1]),Integer.parseInt(parts[2]), Double.parseDouble(parts[3]), LocalTime.parse(parts[4]), LocalTime.parse(parts[5]), Hall.HallStatus.valueOf(parts[6]), parts[7], LocalDateTime.parse(parts[8]));
                 halls.add(hall);

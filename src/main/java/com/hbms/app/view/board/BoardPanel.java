@@ -35,7 +35,9 @@ public class BoardPanel extends JPanel {
 
         if (users.isEmpty()) {
             JLabel emptyLabel = new JLabel("No users found.", SwingConstants.CENTER);
-            emptyLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            Font currentFont = emptyLabel.getFont();
+            Font newFont = currentFont.deriveFont(16f);
+            emptyLabel.setFont(newFont);
             container.add(emptyLabel);
             container.revalidate();
             container.repaint();
@@ -57,12 +59,10 @@ public class BoardPanel extends JPanel {
             card.setLayout(new BorderLayout());
             card.setOpaque(false);
             card.setBorder(new EmptyBorder(15,15,15,15));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
 
             JPanel infoPanel = new JPanel(new GridLayout(0, 1));
             infoPanel.setOpaque(false);
-
-            Font labelFont = new Font("Inter", Font.PLAIN, 14);
 
             JLabel userId = new JLabel("User ID: " + user.getUserId());
             JLabel name = new JLabel("Name: " + user.getFirstName() + " " + user.getLastName());
@@ -73,8 +73,8 @@ public class BoardPanel extends JPanel {
 
             for (JLabel lbl : labels) {
                 lbl.setForeground(Color.WHITE);
-                lbl.setFont(labelFont);
                 infoPanel.add(lbl);
+                infoPanel.add(Box.createVerticalStrut(6));
             }
 
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -82,6 +82,7 @@ public class BoardPanel extends JPanel {
 
             JButton btnChangeRole = new JButton("Change Role");
             JButton btnDelete = new JButton("Delete");
+            btnDelete.setBackground(new Color(255, 66, 69));
 
             btnChangeRole.addActionListener(e -> {
                 String[] roles = {"CUSTOMER", "STAFF", "MANAGER"};

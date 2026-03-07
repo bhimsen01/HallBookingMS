@@ -23,7 +23,7 @@ public class ProfilePanel extends JPanel {
 
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        container.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 20));
 
         // Main card - Display info as text
         JPanel card = new JPanel() {
@@ -40,9 +40,7 @@ public class ProfilePanel extends JPanel {
         card.setLayout(new GridLayout(4, 2, 10, 10));
         card.setOpaque(false);
         card.setBorder(new EmptyBorder(20, 20, 20, 20));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
-
-        Font labelFont = new Font("Inter", Font.PLAIN, 14);
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
 
         lblFirstName = new JLabel(currentUser.getFirstName());
         lblLastName = new JLabel(currentUser.getLastName());
@@ -53,7 +51,7 @@ public class ProfilePanel extends JPanel {
 
         for (JLabel lbl : labels) {
             lbl.setForeground(Color.WHITE);
-            lbl.setFont(labelFont);
+            lbl.add(Box.createVerticalStrut(6));
         }
 
         card.add(new JLabel("First Name:"));
@@ -72,7 +70,7 @@ public class ProfilePanel extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setOpaque(false);
 
-        JButton btnUpdate = new JButton("Update Profile");
+        JButton btnUpdate = new JButton("Update");
         JButton btnLogout = new JButton("Logout");
 
         btnUpdate.setPreferredSize(new Dimension(120, 40));

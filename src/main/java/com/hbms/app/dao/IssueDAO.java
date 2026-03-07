@@ -48,6 +48,9 @@ public class IssueDAO {
         try(BufferedReader br=new BufferedReader(new FileReader(file))){
             String line;
             while ((line=br.readLine())!=null){
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO | getAllIssues");
+                    continue;}
                 String[] parts=line.split(",");
                 LocalDateTime createdAt = parts[5].isEmpty() ? null : LocalDateTime.parse(parts[5]);
                 LocalDateTime resolvedAt = parts[6].isEmpty() ? null : LocalDateTime.parse(parts[6]);
@@ -81,5 +84,9 @@ public class IssueDAO {
 
     public Issue findById(String id){
         return getAllIssues().stream().filter(issue -> issue.getIssueId().equalsIgnoreCase(id)).findFirst().orElse(null);
+    }
+
+    public List<Issue> getByUserId(String userId){
+        return getAllIssues().stream().filter(issue -> issue.getRaisedBy().equalsIgnoreCase(userId)).toList();
     }
 }

@@ -2,6 +2,7 @@ package com.hbms.app.view.hall;
 
 import com.hbms.app.controller.BookingController;
 import com.hbms.app.controller.HallController;
+import com.hbms.app.controller.ReceiptController;
 import com.hbms.app.dao.HallDAO;
 import com.hbms.app.model.Hall;
 import com.hbms.app.view.MainFrame;
@@ -17,7 +18,7 @@ public class HallsPanel extends JPanel {
     private final BookingController bookingController;
     private final HallController hallController;
     private final JFrame parentFrame;
-    private final com.hbms.app.controller.ReceiptController receiptController;
+    private final ReceiptController receiptController;
 
     private HallDAO hallDAO;
     private JPanel container;
@@ -61,6 +62,15 @@ public class HallsPanel extends JPanel {
         List<Hall> halls = hallDAO.getAllHalls();
         Collections.reverse(halls);
 
+        if (halls.isEmpty()) {
+            JLabel emptyLabel = new JLabel("No hall exists.", SwingConstants.CENTER);
+            Font currentFont = emptyLabel.getFont();
+            Font newFont = currentFont.deriveFont(16f);
+            emptyLabel.setFont(newFont);
+            add(emptyLabel, BorderLayout.CENTER);
+            return;
+        }
+
         for (Hall hall : halls) {
 
             JPanel card = new JPanel() {
@@ -82,13 +92,13 @@ public class HallsPanel extends JPanel {
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
             infoPanel.setOpaque(false);
 
-            JLabel type = new JLabel("Type: " + hall.getHallType());
-            JLabel number = new JLabel("Hall: " + hall.getHallNumber());
-            JLabel capacity = new JLabel("Capacity: " + hall.getHallCapacity());
-            JLabel price = new JLabel("Price: RM " + hall.getHallPrice());
-            JLabel status = new JLabel("Status: " + hall.getHallStatus());
-            JLabel availableFrom = new JLabel("Available From: " + hall.getHallAvailableFrom());
-            JLabel availableUntil = new JLabel("Available Until: " + hall.getHallAvailableUntil());
+            JLabel type = new JLabel("Type • " + hall.getHallType());
+            JLabel number = new JLabel("Hall • " + hall.getHallNumber());
+            JLabel capacity = new JLabel("Capacity • " + hall.getHallCapacity());
+            JLabel price = new JLabel("Price • RM " + hall.getHallPrice());
+            JLabel status = new JLabel("Status • " + hall.getHallStatus());
+            JLabel availableFrom = new JLabel("Available From • " + hall.getHallAvailableFrom());
+            JLabel availableUntil = new JLabel("Available Until • " + hall.getHallAvailableUntil());
 
             JLabel[] labels = {type, number, capacity, price, status, availableFrom, availableUntil};
 
@@ -98,7 +108,7 @@ public class HallsPanel extends JPanel {
                 infoPanel.add(Box.createVerticalStrut(6));
             }
 
-            JButton bookButton = new JButton("Book Now");
+            JButton bookButton = new JButton("Book Hall");
             JButton editButton = new JButton("Edit");
             JButton deleteButton = new JButton("Delete");
             deleteButton.setBackground(new Color(255, 66, 69));
@@ -124,10 +134,10 @@ public class HallsPanel extends JPanel {
             });
 
             deleteButton.addActionListener(e -> {
-                int confirm = JOptionPane.showConfirmDialog(this, "Delete this hall?", "Confirm", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete Hall "+hall.getHallNumber() +"?", "Confirm", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    boolean msg = hallController.deleteHall(hall.getHallNumber());
-                    JOptionPane.showMessageDialog(this, msg);
+                    hallController.deleteHall(hall.getHallNumber());
+                    JOptionPane.showMessageDialog(this, "Hall deleted.");
                     loadHalls();
                 }
             });

@@ -12,6 +12,7 @@ import com.hbms.app.view.initial.StartPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
 
 public class MainFrame extends JFrame {
     private CardLayout cardLayout;
@@ -80,6 +81,24 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "DASHBOARD");
     }
 
+    private static void setGlobalScrollSpeed(int pixelsPerStep) {
+        UIManager.put("ScrollBar.unitIncrement", pixelsPerStep);
+
+        // Optional: for dynamically added scroll panes
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if (event instanceof MouseWheelEvent e) {
+                Component comp = e.getComponent();
+                while (comp != null && !(comp instanceof JScrollPane)) {
+                    comp = comp.getParent();
+                }
+                if (comp instanceof JScrollPane sp) {
+                    sp.getVerticalScrollBar().setUnitIncrement(pixelsPerStep);
+                    sp.getHorizontalScrollBar().setUnitIncrement(pixelsPerStep);
+                }
+            }
+        }, AWTEvent.MOUSE_WHEEL_EVENT_MASK);
+    }
+
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatMacDarkLaf());
@@ -114,6 +133,7 @@ public class MainFrame extends JFrame {
 
         // Launch the main frame
         SwingUtilities.invokeLater(() -> {
+            setGlobalScrollSpeed(20);
             MainFrame frame = new MainFrame();
             // Force all nested components to use Inter immediately
             SwingUtilities.updateComponentTreeUI(frame);

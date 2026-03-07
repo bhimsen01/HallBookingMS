@@ -12,7 +12,7 @@ public class ReceiptDialog extends JDialog {
 
     public ReceiptDialog(JFrame parentFrame, Receipt receipt, Booking booking, User user){
         super(parentFrame, "Booking Successful", true);
-        setSize(550, 500);
+        setSize(450, 500);
         setLocationRelativeTo(parentFrame);
 
         JPanel formPanel = new JPanel();
@@ -21,7 +21,7 @@ public class ReceiptDialog extends JDialog {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        JLabel lblTitle = new JLabel("Booking Successful!");
+        JLabel lblTitle = new JLabel("Booking Successful");
         Font currentFont = lblTitle.getFont();
         Font newFont = currentFont.deriveFont(16f);
         lblTitle.setFont(newFont);
@@ -37,6 +37,7 @@ public class ReceiptDialog extends JDialog {
         addField(formPanel, "Booked From", new JLabel(booking.getBookingFrom().toString()));
         addField(formPanel, "Booked Until", new JLabel(booking.getBookingUntil().toString()));
         addField(formPanel, "Booked By", new JLabel(user.getFirstName() + " " + user.getLastName()));
+        addField(formPanel, "Email", new JLabel(user.getEmail()));
         addField(formPanel, "Receipt Generated", new JLabel(receipt.getReceiptCreatedAt().format(dtf)));
 
         JButton btnClose = new JButton("Okay");

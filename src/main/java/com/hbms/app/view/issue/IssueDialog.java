@@ -24,6 +24,7 @@ public class IssueDialog extends JDialog {
         JLabel lblBooking = new JLabel("Booking ID");
         JTextField tfBookingId = new JTextField(bookingId);
         tfBookingId.setEditable(false);
+        tfBookingId.setFocusable(false);
         tfBookingId.setPreferredSize(new Dimension(200,30));
 
         bookingPanel.add(lblBooking, BorderLayout.WEST);

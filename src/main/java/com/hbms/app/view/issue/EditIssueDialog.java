@@ -14,101 +14,186 @@ public class EditIssueDialog extends JDialog {
     private final Issue issue;
 
     public EditIssueDialog(JFrame parentFrame, IssueController issueController, IssuesPanel issuesPanel, Issue issue) {
-        super(parentFrame, "Edit Issue #" + issue.getIssueId(), true);
+
+        super(parentFrame, "Edit Issue • " + issue.getIssueId(), true);
 
         this.issueController = issueController;
         this.issuesPanel = issuesPanel;
         this.issue = issue;
 
-        setSize(450, 350);
+        setSize(500, 450);
         setLocationRelativeTo(parentFrame);
-        setLayout(new GridLayout(6, 2, 10, 10));
+        setLayout(new GridBagLayout());
 
-        // Issue ID (read-only)
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8,8,8,8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(20,30,20,30)
+        );
+
+        // ===== Fields =====
+
         JTextField tfIssueId = new JTextField(issue.getIssueId());
         tfIssueId.setEditable(false);
 
-        // Booking ID (read-only)
         JTextField tfBookingId = new JTextField(issue.getBookingId());
         tfBookingId.setEditable(false);
 
-        // Description
         JTextArea taDescription = new JTextArea(issue.getDescription());
         taDescription.setLineWrap(true);
         taDescription.setWrapStyleWord(true);
         JScrollPane scrollDesc = new JScrollPane(taDescription);
 
-        // Status dropdown
-        JComboBox<Issue.IssueStatus> cbStatus = new JComboBox<>(Issue.IssueStatus.values());
+        JComboBox<Issue.IssueStatus> cbStatus =
+                new JComboBox<>(Issue.IssueStatus.values());
         cbStatus.setSelectedItem(issue.getIssueStatus());
 
-        // Assigned Staff ID
-        JTextField tfAssignedStaffId = new JTextField(issue.getAssignedStaffId() != null ? issue.getAssignedStaffId() : "");
+        JTextField tfAssignedStaffId =
+                new JTextField(issue.getAssignedStaffId() != null ?
+                        issue.getAssignedStaffId() : "");
 
-        // Manager Remarks
-        JTextArea taRemarks = new JTextArea(issue.getIssueManagerRemarks() != null ? issue.getIssueManagerRemarks() : "");
+        JTextArea taRemarks = new JTextArea(
+                issue.getIssueManagerRemarks() != null ?
+                        issue.getIssueManagerRemarks() : ""
+        );
         taRemarks.setLineWrap(true);
         taRemarks.setWrapStyleWord(true);
         JScrollPane scrollRemarks = new JScrollPane(taRemarks);
 
         JButton btnSave = new JButton("Save");
+        btnSave.setBackground(new Color(0,145,255));
+        btnSave.setForeground(Color.WHITE);
+
         JButton btnCancel = new JButton("Cancel");
 
-        add(new JLabel("Issue ID:"));
-        add(tfIssueId);
+        // ===== Layout =====
 
-        add(new JLabel("Booking ID:"));
-        add(tfBookingId);
+        int y = 0;
 
-        add(new JLabel("Description:"));
-        add(scrollDesc);
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Issue ID"), gbc);
 
-        add(new JLabel("Status:"));
-        add(cbStatus);
+        gbc.gridx = 1;
+        add(tfIssueId, gbc);
 
-        add(new JLabel("Assigned Staff ID:"));
-        add(tfAssignedStaffId);
+        y++;
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Booking ID"), gbc);
 
-        add(new JLabel("Manager Remarks:"));
-        add(scrollRemarks);
+        gbc.gridx = 1;
+        add(tfBookingId, gbc);
 
-        add(btnSave);
-        add(btnCancel);
+        y++;
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Description"), gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1;
+        add(scrollDesc, gbc);
+
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        y++;
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Status"), gbc);
+
+        gbc.gridx = 1;
+        add(cbStatus, gbc);
+
+        y++;
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Assigned Staff ID"), gbc);
+
+        gbc.gridx = 1;
+        add(tfAssignedStaffId, gbc);
+
+        y++;
+        gbc.gridx = 0; gbc.gridy = y;
+        add(new JLabel("Manager Remarks"), gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1;
+        add(scrollRemarks, gbc);
+
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // ===== Button Panel =====
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
+
+        y++;
+        gbc.gridx = 0;
+        gbc.gridy = y;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        add(buttonPanel, gbc);
+
+        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 
         btnSave.addActionListener(e -> {
+
             try {
+
                 String description = taDescription.getText().trim();
-                Issue.IssueStatus status = (Issue.IssueStatus) cbStatus.getSelectedItem();
-                String assignedStaffId = tfAssignedStaffId.getText().trim();
+                Issue.IssueStatus status =
+                        (Issue.IssueStatus) cbStatus.getSelectedItem();
+                String assignedStaffId =
+                        tfAssignedStaffId.getText().trim();
                 String remarks = taRemarks.getText().trim();
 
-                if (description.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Description cannot be empty.");
+                if(description.isEmpty()){
+                    JOptionPane.showMessageDialog(this,
+                            "Description cannot be empty.");
                     return;
                 }
 
                 Issue updatedIssue = new Issue();
                 updatedIssue.setDescription(description);
                 updatedIssue.setIssueStatus(status);
-                updatedIssue.setAssignedStaffId(assignedStaffId.isEmpty() ? null : assignedStaffId);
-                updatedIssue.setIssueManagerRemarks(remarks.isEmpty() ? null : remarks);
+                updatedIssue.setAssignedStaffId(
+                        assignedStaffId.isEmpty() ? null : assignedStaffId
+                );
+                updatedIssue.setIssueManagerRemarks(
+                        remarks.isEmpty() ? null : remarks
+                );
 
-                // If marking as RESOLVED, set resolved time
-                if (status == Issue.IssueStatus.RESOLVED) {
+                if(status == Issue.IssueStatus.RESOLVED){
                     updatedIssue.setIssueResolvedAt(LocalDateTime.now());
                 }
 
-                boolean msg = issueController.editIssue(issue.getIssueId(), updatedIssue);
-                JOptionPane.showMessageDialog(this, msg);
-                issuesPanel.loadIssues();
-                dispose();
+                boolean success = issueController.editIssue(
+                        issue.getIssueId(), updatedIssue
+                );
 
-            } catch (Exception ex) {
+                if(success){
+                    JOptionPane.showMessageDialog(this,
+                            "Issue updated successfully!");
+                    issuesPanel.loadIssues();
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Failed to update issue.");
+                }
+
+            } catch (Exception ex){
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error updating issue: " + ex.getMessage());
+                JOptionPane.showMessageDialog(this,
+                        "Error updating issue: " + ex.getMessage());
             }
+
         });
 
         setVisible(true);

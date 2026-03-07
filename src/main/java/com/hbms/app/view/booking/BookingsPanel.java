@@ -92,7 +92,7 @@ public class BookingsPanel extends JPanel {
             btnCancel.setBackground(new Color(255, 66, 69));
             JButton btnIssue = new JButton("Raise Issue");
 
-            // Disable cancel if already cancelled
+            // Disable cancel if already canceled
             if ((booking.getBookingStatus() == Booking.BookingStatus.CANCELLED) || (booking.getBookingStatus() == Booking.BookingStatus.COMPLETED)) {
                 btnCancel.setEnabled(false);
             }
@@ -101,7 +101,7 @@ public class BookingsPanel extends JPanel {
                 int confirm = JOptionPane.showConfirmDialog(
                         this,
                         "Are you sure you want to cancel this booking?",
-                        "Confirm Cancel",
+                        "Confirm",
                         JOptionPane.YES_NO_OPTION
                 );
 

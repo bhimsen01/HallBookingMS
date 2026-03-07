@@ -97,11 +97,17 @@ public class SignupPanel extends JPanel {
         add(buttonPanel, gbc);
 
         // Actions
-        btnBack.addActionListener(e -> frame.showScreen("START"));
+        btnBack.addActionListener(e -> {
+            tfFirstName.setText("");
+            tfLastName.setText("");
+            tfEmail.setText("");
+            pfPassword.setText("");
+            lblMessage.setText("");
+            frame.showScreen("START");});
 
         btnSignup.addActionListener(e -> {
 
-            String firstName = tfFirstName.getText().trim();
+            String firstName = tfFirstName.getText().trim().toUpperCase();
             String lastName = tfLastName.getText().trim();
             String email = tfEmail.getText().trim();
             String password = new String(pfPassword.getPassword()).trim();
@@ -111,6 +117,9 @@ public class SignupPanel extends JPanel {
                 lblMessage.setText("Empty fields.");
                 return;
             }
+
+            firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+            lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
 
             if (!email.contains("@")) {
                 lblMessage.setForeground(new Color(255, 66,69));
@@ -128,7 +137,7 @@ public class SignupPanel extends JPanel {
 
             if (result) {
                 lblMessage.setForeground(new Color(48, 209,88));
-                lblMessage.setText("Signup successful.");
+                lblMessage.setText("Signup successful. Proceed to login.");
             } else {
                 lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Signup failed.");

@@ -11,13 +11,13 @@ public class UserDAO {
     public final String filePath="data/users.txt";
 
     private String convertToLine(User user) {
-        return user.getUserId() + "," +
-                user.getFirstName() + "," +
-                user.getLastName() + "," +
-                user.getEmail() + "," +
-                user.getPassword() + "," +
-                user.getRole() + "," +
-                user.getBalance() + "," +
+        return user.getUserId() + "|" +
+                user.getFirstName() + "|" +
+                user.getLastName() + "|" +
+                user.getEmail() + "|" +
+                user.getPassword() + "|" +
+                user.getRole() + "|" +
+                user.getBalance() + "|" +
                 user.getUserCreatedAt();
     }
 
@@ -47,7 +47,10 @@ public class UserDAO {
         try(BufferedReader br=new BufferedReader(new FileReader(filePath))){
             String line;
             while ((line =br.readLine())!=null){
-                String[] parts=line.split(",");
+                if (line.isEmpty()) {
+                    System.out.println("Empty line | DAO | getAllUsers");
+                    continue;}
+                String[] parts=line.split("\\|");
                 User user=new User(parts[0], parts[1], parts[2],parts[3],parts[4],User.Role.valueOf(parts[5]), Double.parseDouble(parts[6]), LocalDateTime.parse(parts[7]));
                 users.add(user);
             }

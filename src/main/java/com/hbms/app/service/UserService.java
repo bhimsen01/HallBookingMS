@@ -4,6 +4,7 @@ import com.hbms.app.auth.AuthUser;
 import com.hbms.app.dao.UserDAO;
 import com.hbms.app.model.User;
 import com.hbms.app.utility.IdCounter;
+import com.hbms.app.utility.PasswordUtil;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -31,11 +32,12 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email.");
 
         String userId= idCounter.generateId("USER","U");
+        String hashedPassword= PasswordUtil.hashPassword(password);
         User.Role role= User.Role.CUSTOMER;
         double balance=0;
         LocalDateTime userCreatedAt=LocalDateTime.now();
 
-        User user=new User(userId, firstName, lastName, email, password, role, balance, userCreatedAt);
+        User user=new User(userId, firstName, lastName, email, hashedPassword, role, balance, userCreatedAt);
 
         try{
             userDAO.saveUser(user);
@@ -58,11 +60,11 @@ public class UserService {
         if (user==null)
             throw new IllegalArgumentException("User not found.");
 
-        if (!user.getPassword().equals(password))
-            throw new IllegalArgumentException("Incorrect password.");
-
         try{
-            return new AuthUser(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+            if(PasswordUtil.verifyPassword(user.getPassword(), password)){
+                return new AuthUser(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+            }
+            throw new IllegalArgumentException("Incorrect password.");
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Login failed. ",e);

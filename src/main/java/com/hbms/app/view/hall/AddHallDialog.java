@@ -12,14 +12,15 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class AddHallDialog extends JDialog {
+    private JLabel lblMessage;
 
     public AddHallDialog(JFrame parentFrame, HallController hallController, HallsPanel hallsPanel) {
 
         super(parentFrame, "Add Hall", true);
 
-        setSize(500, 500);
+        setSize(500, 550);
         setLocationRelativeTo(parentFrame);
-        setLayout(new GridLayout(9,2,10,10));
+        setLayout(new GridLayout(11,2,10,10));
         ((JComponent) getContentPane()).setBorder(
                 BorderFactory.createEmptyBorder(20,40,0,40)
         );
@@ -31,6 +32,7 @@ public class AddHallDialog extends JDialog {
         JTextField tfRemarks = new JTextField();
 
         JComboBox<Hall.HallType> cbHallType = new JComboBox<>(Hall.HallType.values());
+        JComboBox<Hall.HallStatus> cbHallStatus = new JComboBox<>(Hall.HallStatus.values());
 
         // ===== Time Spinners =====
         SpinnerDateModel fromModel = new SpinnerDateModel();
@@ -65,8 +67,16 @@ public class AddHallDialog extends JDialog {
         add(new JLabel("Available Until"));
         add(spUntil);
 
+        add(new JLabel("Status"));
+        add(cbHallStatus);
+
         add(new JLabel("Remarks"));
         add(tfRemarks);
+
+        lblMessage = new JLabel("");
+        lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
+        add(lblMessage);
+        add(new JLabel(""));
 
         add(btnAdd);
         add(btnCancel);
@@ -77,12 +87,29 @@ public class AddHallDialog extends JDialog {
 
         btnAdd.addActionListener(e -> {
             try {
-
                 int hallNumber = Integer.parseInt(tfNumber.getText().trim());
                 int capacity = Integer.parseInt(tfCapacity.getText().trim());
                 double price = Double.parseDouble(tfPrice.getText().trim());
+                String remarks=tfRemarks.getText().trim();
+
+                if (!(hallNumber>0 && hallNumber<10000)){
+                    lblMessage.setForeground(new Color(255, 66,69));
+                    lblMessage.setText("Invalid Hall Number.");
+                }
+
+                if (!(capacity>0 && capacity<=5000)){
+                    lblMessage.setForeground(new Color(255, 66,69));
+                    lblMessage.setText("Invalid Hall Capacity.");
+                }
+
+                if (!(price>0 && price<999999)){
+                    lblMessage.setForeground(new Color(255, 66,69));
+                    lblMessage.setText("Invalid price.");
+                }
 
                 Hall.HallType type = (Hall.HallType) cbHallType.getSelectedItem();
+
+                Hall.HallStatus status = (Hall.HallStatus) cbHallStatus.getSelectedItem();
 
                 Date fromDate = (Date) spFrom.getValue();
                 LocalTime availableFrom = Instant.ofEpochMilli(fromDate.getTime())
@@ -94,6 +121,11 @@ public class AddHallDialog extends JDialog {
                         .atZone(ZoneId.systemDefault())
                         .toLocalTime();
 
+                if (availableUntil.isBefore(availableFrom)) {
+                    lblMessage.setForeground(new Color(255,66,69));
+                    lblMessage.setText("Available Until not after Available From.");
+                }
+
                 Hall hall = new Hall(
                         hallNumber,
                         type,
@@ -101,24 +133,25 @@ public class AddHallDialog extends JDialog {
                         price,
                         availableFrom,
                         availableUntil,
-                        Hall.HallStatus.AVAILABLE,
-                        tfRemarks.getText().trim(),
+                        status,
+                        remarks,
                         LocalDateTime.now()
                 );
 
                 boolean success = hallController.addHall(hall);
 
                 if(success){
-                    JOptionPane.showMessageDialog(this,"Hall added successfully!");
+                    JOptionPane.showMessageDialog(this,"Hall added successfully.");
                     hallsPanel.loadHalls();
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this,"Failed to add hall.");
+                    lblMessage.setForeground(new Color(255,66,69));
+                    lblMessage.setText("Failed to add hall.");
                 }
 
             } catch (Exception ex){
-                JOptionPane.showMessageDialog(this,
-                        "Invalid input.\nHall Number & Capacity must be integers.\nPrice must be a number.");
+                lblMessage.setForeground(new Color(255,66,69));
+                lblMessage.setText("Invalid input format.");
             }
         });
 
