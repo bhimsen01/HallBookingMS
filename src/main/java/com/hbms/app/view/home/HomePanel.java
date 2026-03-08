@@ -8,10 +8,8 @@ public class HomePanel extends JPanel {
 
     public HomePanel() {
         setLayout(new BorderLayout());
-//        setBackground(new Color(32, 32, 32)); // matches your dark theme
         setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
 
-        // ===== Title =====
         JLabel lblTitle = new JLabel("Hall Symphony Booking System");
         Font currentFont = lblTitle.getFont();
         Font newFont = currentFont.deriveFont(28f);
@@ -20,12 +18,10 @@ public class HomePanel extends JPanel {
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         add(lblTitle, BorderLayout.NORTH);
 
-        // ===== Center panel =====
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
 
-        // ===== Banner / Image =====
         RoundedImagePanel imagePanel = new RoundedImagePanel("/images/HBMS.png", 20);
         imagePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         imagePanel.setMaximumSize(new Dimension(1000, 800)); // adjust size
@@ -33,7 +29,6 @@ public class HomePanel extends JPanel {
         centerPanel.add(imagePanel);
         centerPanel.add(Box.createVerticalStrut(20));
 
-        // ===== Optional Info Cards with rounded corners =====
         JPanel decorativePanel = new JPanel();
         decorativePanel.setOpaque(false);
         decorativePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
@@ -47,7 +42,6 @@ public class HomePanel extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
     }
 
-    // ===== Info card with rounded corners =====
     private JPanel createInfoCard(String title, String desc, int radius) {
         JPanel card = new JPanel() {
             @Override
@@ -80,7 +74,6 @@ public class HomePanel extends JPanel {
         return card;
     }
 
-    // ===== Panel for rounded image =====
     private static class RoundedImagePanel extends JPanel {
         private final Image image;
         private final int radius;
@@ -96,11 +89,9 @@ public class HomePanel extends JPanel {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Draw rounded clip
             Shape clip = new RoundRectangle2D.Float(0,0,getWidth(),getHeight(), radius, radius);
             g2.setClip(clip);
 
-            // Draw image stretched
             g2.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
             g2.dispose();
@@ -108,7 +99,7 @@ public class HomePanel extends JPanel {
 
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(1000,800); // default size
+            return new Dimension(1000,800);
         }
     }
 }

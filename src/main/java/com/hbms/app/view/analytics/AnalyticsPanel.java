@@ -1,12 +1,7 @@
 package com.hbms.app.view.analytics;
 
-import com.hbms.app.dao.BookingDAO;
-import com.hbms.app.dao.HallDAO;
-import com.hbms.app.model.Booking;
-import com.hbms.app.model.Hall;
 import com.hbms.app.service.BookingService;
 import com.hbms.app.service.SymphonyAccountService;
-import com.hbms.app.view.initial.Refreshable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,12 +17,10 @@ public class AnalyticsPanel extends JPanel {
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
-        // Account Card at top
         JPanel accountCard = createAccountCard();
         container.add(accountCard);
         container.add(Box.createVerticalStrut(10));
 
-        // Analytics cards
         JPanel analyticsPanel = new JPanel();
         analyticsPanel.setLayout(new GridLayout(2, 2, 15, 15));
         analyticsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
@@ -40,7 +33,6 @@ public class AnalyticsPanel extends JPanel {
         container.add(analyticsPanel);
         container.add(Box.createVerticalStrut(10));
 
-        // Additional stats
         JPanel statsPanel = new JPanel();
         statsPanel.setLayout(new GridLayout(1, 3, 15, 15));
         statsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));

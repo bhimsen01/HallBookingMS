@@ -1,7 +1,6 @@
 package com.hbms.app.view.issues;
 
 import com.hbms.app.controller.IssueController;
-import com.hbms.app.dao.UserDAO;
 import com.hbms.app.model.Issue;
 
 import javax.swing.*;
@@ -35,7 +34,7 @@ public class UpdateIssueDialog extends JDialog {
                 BorderFactory.createEmptyBorder(20,30,20,30)
         );
 
-        // ===== Fields =====
+        // fields
 
         JTextField tfIssueId = new JTextField(issue.getIssueId());
         tfIssueId.setFocusable(false);
@@ -74,7 +73,7 @@ public class UpdateIssueDialog extends JDialog {
 
         JButton btnCancel = new JButton("Cancel");
 
-        // ===== Layout =====
+        // layout
 
         int y = 0;
 
@@ -149,7 +148,6 @@ public class UpdateIssueDialog extends JDialog {
 
         add(buttonPanel, gbc);
 
-        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 
@@ -166,7 +164,7 @@ public class UpdateIssueDialog extends JDialog {
                     return;
                 }
 
-                // Optional: check assigned staff validity
+
 //        if(userDAO.findById(assignedStaffId) == null){
 //            lblMessage.setForeground(new Color(255, 66,69));
 //            lblMessage.setText("Assigned staff does not exist.");

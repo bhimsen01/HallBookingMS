@@ -4,7 +4,6 @@ import com.hbms.app.auth.AuthUser;
 import com.hbms.app.controller.UserController;
 import com.hbms.app.dao.UserDAO;
 import com.hbms.app.model.User;
-import com.hbms.app.service.UserService;
 import com.hbms.app.session.Session;
 import com.hbms.app.view.MainFrame;
 
@@ -13,7 +12,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class ProfilePanel extends JPanel {
-    private com.hbms.app.controller.UserController userController;
+    private UserController userController;
     private UserDAO userDAO;
     private JLabel lblFirstName;
     private JLabel lblLastName;

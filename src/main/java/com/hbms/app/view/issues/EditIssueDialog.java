@@ -19,7 +19,6 @@ public class EditIssueDialog extends JDialog {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        // ===== Booking ID (read-only) =====
         JPanel bookingPanel = new JPanel(new BorderLayout(10, 10));
         JLabel lblBooking = new JLabel("Booking ID");
         JTextField tfBookingId = new JTextField(issue.getBookingId());
@@ -29,7 +28,6 @@ public class EditIssueDialog extends JDialog {
         bookingPanel.add(lblBooking, BorderLayout.WEST);
         bookingPanel.add(tfBookingId, BorderLayout.CENTER);
 
-        // ===== Description =====
         JPanel descPanel = new JPanel(new BorderLayout(10, 10));
         JLabel lblDesc = new JLabel("Description");
 
@@ -43,7 +41,6 @@ public class EditIssueDialog extends JDialog {
         descPanel.add(lblDesc, BorderLayout.NORTH);
         descPanel.add(scroll, BorderLayout.CENTER);
 
-        // ===== Buttons =====
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton btnSave = new JButton("Save");
         btnSave.setBackground(new Color(0, 145, 255));
@@ -59,7 +56,6 @@ public class EditIssueDialog extends JDialog {
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
 
-        // ===== Add panels =====
         mainPanel.add(bookingPanel);
         mainPanel.add(Box.createVerticalStrut(15));
         mainPanel.add(descPanel);
@@ -70,7 +66,6 @@ public class EditIssueDialog extends JDialog {
 
         add(mainPanel);
 
-        // ===== Actions =====
         btnCancel.addActionListener(e -> dispose());
 
         btnSave.addActionListener(e -> {

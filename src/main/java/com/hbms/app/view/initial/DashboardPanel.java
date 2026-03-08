@@ -1,11 +1,10 @@
 package com.hbms.app.view.initial;
 
-import com.hbms.app.controller.BookingController;
-import com.hbms.app.controller.HallController;
-import com.hbms.app.controller.IssueController;
-import com.hbms.app.controller.UserController;
+import com.hbms.app.controller.*;
 import com.hbms.app.dao.UserDAO;
+import com.hbms.app.model.User;
 import com.hbms.app.service.BookingService;
+import com.hbms.app.session.Session;
 import com.hbms.app.view.MainFrame;
 import com.hbms.app.view.analytics.AnalyticsPanel;
 import com.hbms.app.view.boards.BoardPanel;
@@ -27,7 +26,7 @@ public class DashboardPanel extends JPanel {
     private final HallController hallController;
     private final IssueController issueController;
     private final UserController userController;
-    private final com.hbms.app.controller.ReceiptController receiptController;
+    private final ReceiptController receiptController;
     private HallsPanel hallsPanel;
     private BookingsPanel bookingsPanel;
     private IssuesPanel issuesPanel;
@@ -56,8 +55,15 @@ public class DashboardPanel extends JPanel {
 
         issuesPanel = new IssuesPanel(mainFrame, issueController);
         contentPanel.add(issuesPanel, "ISSUES");
-        contentPanel.add(new AnalyticsPanel(bookingService), "ANALYTICS");
-        contentPanel.add(new BoardPanel(userController), "BOARD");
+
+        if (Session.getCurrentUser().getRole() == User.Role.ADMINISTRATOR || Session.getCurrentUser().getRole() == User.Role.MANAGER) {
+            contentPanel.add(new AnalyticsPanel(bookingService), "ANALYTICS");
+        }
+
+        if(Session.getCurrentUser().getRole()==User.Role.ADMINISTRATOR){
+            contentPanel.add(new BoardPanel(userController), "BOARD");
+        }
+
         contentPanel.add(new ProfilePanel(userController, userDAO), "PROFILE");
         contentPanel.add(new SettingsPanel(), "SETTINGS");
 

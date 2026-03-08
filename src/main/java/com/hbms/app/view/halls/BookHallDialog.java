@@ -137,7 +137,7 @@ public class BookHallDialog extends JDialog {
                 dispose();
             } else {
                 lblMessage.setForeground(new Color(255, 66,69));
-                lblMessage.setText("Failed to book hall.");
+                lblMessage.setText("Not available for the selected time. Book another if you may.");
             }
         });
 

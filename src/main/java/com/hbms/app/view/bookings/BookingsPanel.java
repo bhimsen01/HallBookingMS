@@ -4,12 +4,16 @@ import com.hbms.app.controller.BookingController;
 import com.hbms.app.controller.IssueController;
 import com.hbms.app.dao.BookingDAO;
 import com.hbms.app.model.Booking;
+import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
 import com.hbms.app.view.initial.Refreshable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,8 +54,14 @@ public class BookingsPanel extends JPanel implements Refreshable {
         container.removeAll();
 
         String userId = Session.getCurrentUser().getUserId();
+        User.Role role = Session.getCurrentUser().getRole();
 
-        List<Booking> myBookings = bookingDAO.getByUserId(userId);
+        List<Booking> myBookings;
+        if (role == User.Role.ADMINISTRATOR || role == User.Role.MANAGER) {
+            myBookings = bookingDAO.getAllBookings();
+        } else {
+            myBookings = bookingDAO.getByUserId(userId);
+        }
         myBookings = new ArrayList<>(myBookings);
         Collections.reverse(myBookings);
 
@@ -90,13 +100,16 @@ public class BookingsPanel extends JPanel implements Refreshable {
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
             infoPanel.setOpaque(false);
 
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
             JLabel hallType = new JLabel("Hall Type • " + booking.getHallType());
             JLabel hallNumber = new JLabel("Hall Number • " + booking.getHallNumber());
-            JLabel date = new JLabel("Date • " + booking.getBookingDate());
-            JLabel time = new JLabel("Time • " + booking.getBookingFrom() + " - " + booking.getBookingUntil());
+            JLabel date = new JLabel("Date • " + booking.getBookingDate().format(dateFormatter));
+            JLabel time = new JLabel("Time • " + booking.getBookingFrom().format(timeFormatter) + " - " + booking.getBookingUntil().format(timeFormatter));
             JLabel amount = new JLabel("Amount • RM " + booking.getAmount());
             JLabel status = new JLabel("Status • " + booking.getBookingStatus());
-            JLabel bookedAt=new JLabel("Booked At • "+booking.getBookingCreatedAt());
+            JLabel bookedAt=new JLabel("Booked At • "+booking.getBookingCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")));
 
             JLabel[] labels = {hallType, hallNumber, date, time, amount, status, bookedAt};
 
@@ -118,6 +131,13 @@ public class BookingsPanel extends JPanel implements Refreshable {
                     booking.getBookingStatus() == Booking.BookingStatus.COMPLETED) {
 
                 btnCancel.setEnabled(false);
+            }
+
+            // disable the cancel if it is not before3 days
+            long daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), booking.getBookingDate());
+            if (daysUntil < 3) {
+                btnCancel.setEnabled(false);
+                btnCancel.setToolTipText("Cannot cancel within 3 days of booking date.");
             }
 
             btnCancel.addActionListener(e -> {

@@ -26,7 +26,6 @@ public class EditHallDialog extends JDialog {
                 BorderFactory.createEmptyBorder(20,40,0,40)
         );
 
-        // Fields
         JTextField tfNumber = new JTextField(String.valueOf(hall.getHallNumber()));
         tfNumber.setEditable(false);
         tfNumber.setFocusable(false);
@@ -56,8 +55,6 @@ public class EditHallDialog extends JDialog {
         JButton btnSave = new JButton("Save");
         btnSave.setBackground(new Color(0, 145, 255));
         JButton btnCancel = new JButton("Cancel");
-
-        // ===== Layout =====
 
         add(new JLabel("Hall Number"));
         add(tfNumber);
@@ -92,8 +89,6 @@ public class EditHallDialog extends JDialog {
 
         add(btnSave);
         add(btnCancel);
-
-        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 

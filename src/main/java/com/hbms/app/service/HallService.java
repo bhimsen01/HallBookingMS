@@ -5,9 +5,6 @@ import com.hbms.app.model.Hall;
 
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class HallService {
     private final HallDAO hallDAO;

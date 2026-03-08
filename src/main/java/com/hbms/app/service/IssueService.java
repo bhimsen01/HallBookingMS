@@ -3,7 +3,6 @@ package com.hbms.app.service;
 import com.hbms.app.auth.AuthUser;
 import com.hbms.app.dao.IssueDAO;
 import com.hbms.app.model.Issue;
-import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
 import com.hbms.app.utility.IdCounter;
 

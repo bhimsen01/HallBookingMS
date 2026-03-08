@@ -1,7 +1,6 @@
 package com.hbms.app.dao;
 
 import com.hbms.app.model.Hall;
-import com.hbms.app.model.User;
 
 import java.io.*;
 import java.time.LocalDateTime;

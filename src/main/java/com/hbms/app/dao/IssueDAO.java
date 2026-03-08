@@ -89,4 +89,8 @@ public class IssueDAO {
     public List<Issue> getByUserId(String userId){
         return getAllIssues().stream().filter(issue -> issue.getRaisedBy().equalsIgnoreCase(userId)).toList();
     }
+
+    public List<Issue> getByAssignment(String staffId){
+        return getAllIssues().stream().filter(issue -> issue.getAssignedStaffId().equalsIgnoreCase(staffId)).toList();
+    }
 }

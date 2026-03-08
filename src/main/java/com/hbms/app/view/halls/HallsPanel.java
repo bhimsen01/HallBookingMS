@@ -5,11 +5,14 @@ import com.hbms.app.controller.HallController;
 import com.hbms.app.controller.ReceiptController;
 import com.hbms.app.dao.HallDAO;
 import com.hbms.app.model.Hall;
+import com.hbms.app.model.User;
 import com.hbms.app.view.initial.Refreshable;
+import com.hbms.app.session.Session;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +42,10 @@ public class HallsPanel extends JPanel implements Refreshable {
         btnAddHall.addActionListener(e ->
                 new AddHallDialog(parentFrame, hallController, this)
         );
+
+        if (Session.getCurrentUser().getRole() == User.Role.CUSTOMER) {
+            btnAddHall.setVisible(false);
+        }
 
         topPanel.add(btnAddHall);
         add(topPanel, BorderLayout.NORTH);
@@ -92,13 +99,15 @@ public class HallsPanel extends JPanel implements Refreshable {
             JPanel infoPanel = new JPanel(new GridLayout(0,1));
             infoPanel.setOpaque(false);
 
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
             JLabel type = new JLabel("Type • " + hall.getHallType());
             JLabel number = new JLabel("Hall • " + hall.getHallNumber());
             JLabel capacity = new JLabel("Capacity • " + hall.getHallCapacity());
             JLabel price = new JLabel("Price • RM " + hall.getHallPrice());
             JLabel status = new JLabel("Status • " + hall.getHallStatus());
-            JLabel availableFrom = new JLabel("Available From • " + hall.getHallAvailableFrom());
-            JLabel availableUntil = new JLabel("Available Until • " + hall.getHallAvailableUntil());
+            JLabel availableFrom = new JLabel("Available From • " + hall.getHallAvailableFrom().format(timeFormatter));
+            JLabel availableUntil = new JLabel("Available Until • " + hall.getHallAvailableUntil().format(timeFormatter));
             JLabel remarks=new JLabel("Remarks • "+hall.getHallRemarks());
 
             JLabel[] labels = {type, number, capacity, price, status, availableFrom, availableUntil, remarks};
@@ -142,6 +151,11 @@ public class HallsPanel extends JPanel implements Refreshable {
 
             JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             south.setOpaque(false);
+
+            if (Session.getCurrentUser().getRole() == User.Role.CUSTOMER) {
+                editButton.setVisible(false);
+                deleteButton.setVisible(false);
+            }
 
             south.add(bookButton);
             south.add(editButton);

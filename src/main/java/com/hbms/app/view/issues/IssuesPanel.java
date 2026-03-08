@@ -3,13 +3,17 @@ package com.hbms.app.view.issues;
 import com.hbms.app.controller.IssueController;
 import com.hbms.app.dao.IssueDAO;
 import com.hbms.app.model.Issue;
+import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
 import com.hbms.app.view.initial.Refreshable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class IssuesPanel extends JPanel implements Refreshable {
     private IssueDAO issueDAO;
@@ -35,7 +39,19 @@ public class IssuesPanel extends JPanel implements Refreshable {
     public void loadIssues() {
         container.removeAll();
         String userId = Session.getCurrentUser().getUserId();
-        List<Issue> myIssues = issueDAO.getByUserId(userId);
+        User.Role role = Session.getCurrentUser().getRole();
+
+        List<Issue> myIssues;
+        if (role == User.Role.ADMINISTRATOR || role == User.Role.MANAGER) {
+            myIssues = issueDAO.getAllIssues();
+        } else if (role==User.Role.SCHEDULER) {
+            Set<Issue> combined = new LinkedHashSet<>();
+            combined.addAll(issueDAO.getByUserId(userId));
+            combined.addAll(issueDAO.getByAssignment(userId));
+            myIssues = List.copyOf(combined);
+        } else {
+            myIssues = issueDAO.getByUserId(userId);
+        }
 
         if (myIssues.isEmpty()) {
             JLabel emptyLabel = new JLabel("No issues found.", SwingConstants.CENTER);
@@ -69,6 +85,8 @@ public class IssuesPanel extends JPanel implements Refreshable {
             infoPanel.setOpaque(false);
 
 
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
             JLabel issueId = new JLabel("Issue ID • " + issue.getIssueId());
             JLabel bookingId = new JLabel("Booking ID • " + issue.getBookingId());
             JLabel description = new JLabel("Description • " + issue.getDescription());
@@ -76,8 +94,8 @@ public class IssuesPanel extends JPanel implements Refreshable {
             JLabel raisedBy=new JLabel("Raised By • " + issue.getRaisedBy());
             JLabel assignedStaffId=new JLabel("Assigned Staff • "+issue.getAssignedStaffId());
             JLabel issueManagerRemarks=new JLabel("Manager Remarks • "+issue.getIssueManagerRemarks());
-            JLabel createdAt=new JLabel("Created At • "+issue.getIssueCreatedAt());
-            JLabel resolvedAt=new JLabel("Resolved At • "+issue.getIssueResolvedAt());
+            JLabel createdAt=new JLabel("Created At • "+ (issue.getIssueCreatedAt() != null ? issue.getIssueCreatedAt().format(dateTimeFormatter) : "N/A"));
+            JLabel resolvedAt=new JLabel("Resolved At • "+ (issue.getIssueResolvedAt() != null ? issue.getIssueResolvedAt().format(dateTimeFormatter) : "N/A"));
 
             JLabel[] labels = {issueId, bookingId, description, status, raisedBy, assignedStaffId, issueManagerRemarks, createdAt, resolvedAt};
 
@@ -94,6 +112,14 @@ public class IssuesPanel extends JPanel implements Refreshable {
             JButton btnEdit = new JButton("Edit");
             JButton btnCancel = new JButton("Cancel Issue");
             btnCancel.setBackground(new Color(255, 66, 69));
+
+            if (role== User.Role.CUSTOMER || role== User.Role.SCHEDULER) {
+                btnUpdate.setVisible(false);
+            }
+
+            if (role== User.Role.SCHEDULER && !issue.getRaisedBy().equals(userId)) {
+                btnUpdate.setVisible(false);
+            }
 
             if (issue.getIssueStatus() == Issue.IssueStatus.CANCELLED || issue.getIssueStatus() == Issue.IssueStatus.RESOLVED) {
                 btnCancel.setEnabled(false);
@@ -123,7 +149,9 @@ public class IssuesPanel extends JPanel implements Refreshable {
                 }
             });
 
-            buttonPanel.add(btnUpdate);
+            if (!Session.getCurrentUser().getRole().equals(com.hbms.app.model.User.Role.CUSTOMER)) {
+                buttonPanel.add(btnUpdate);
+            }
             buttonPanel.add(btnEdit);
             buttonPanel.add(btnCancel);
 

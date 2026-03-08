@@ -37,7 +37,6 @@ public class MainFrame extends JFrame {
         IssueDAO issueDAO = new IssueDAO();
         this.userDAO=new UserDAO();
 
-        // Services
         this.bookingService = new BookingService(idCounter, bookingDAO);
         ReceiptService receiptService = new ReceiptService(idCounter, receiptDAO);
         PaymentService paymentService = new PaymentService(idCounter, paymentDAO);
@@ -45,7 +44,6 @@ public class MainFrame extends JFrame {
         IssueService issueService = new IssueService(idCounter, issueDAO);
         UserService userService = new UserService(idCounter, userDAO);
 
-        // Controllers - initialize all here
         this.receiptController = new ReceiptController(receiptService);
         this.bookingController = new BookingController(bookingService, receiptController, new PaymentController(paymentService));
         this.hallController = new HallController(hallService);
@@ -76,17 +74,17 @@ public class MainFrame extends JFrame {
     }
 
     public void showDashboard() {
-        // Pass all initialized controllers here
         DashboardPanel dashboard = new DashboardPanel(this, bookingController, hallController, issueController, userController, receiptController, userDAO, bookingService);
 
         mainPanel.add(dashboard, "DASHBOARD");
         cardLayout.show(mainPanel, "DASHBOARD");
     }
 
+
+    // scroll speed
     private static void setGlobalScrollSpeed(int pixelsPerStep) {
         UIManager.put("ScrollBar.unitIncrement", pixelsPerStep);
 
-        // Optional: for dynamically added scroll panes
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if (event instanceof MouseWheelEvent e) {
                 Component comp = e.getComponent();
@@ -105,23 +103,19 @@ public class MainFrame extends JFrame {
         try {
             UIManager.setLookAndFeel(new FlatMacDarkLaf());
 
-            // Rounded UI
             UIManager.put("Component.arc", 18);
             UIManager.put("Button.arc", 20);
             UIManager.put("TextComponent.arc", 12);
             UIManager.put("ProgressBar.arc", 12);
             UIManager.put("TitlePane.unifiedBackground", true);
 
-            // Larger spacing
             UIManager.put("Button.margin", new Insets(8,16,8,16));
             UIManager.put("Component.focusWidth", 1);
 
-            // Accent color (Windows 11 style blue)
             Color accent = new Color(0,145,255);
             UIManager.put("Component.focusColor", accent);
             UIManager.put("Button.default.background", accent);
 
-            // Load Inter variable font from resources and force it
             Font interVariable = Font.createFont(
                     Font.TRUETYPE_FONT,
                     MainFrame.class.getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf")
@@ -133,11 +127,11 @@ public class MainFrame extends JFrame {
             ex.printStackTrace();
         }
 
-        // Launch the main frame
+        // launch the main frame
         SwingUtilities.invokeLater(() -> {
             setGlobalScrollSpeed(20);
             MainFrame frame = new MainFrame();
-            // Force all nested components to use Inter immediately
+            // force all  to use Inter font
             SwingUtilities.updateComponentTreeUI(frame);
         });
     }

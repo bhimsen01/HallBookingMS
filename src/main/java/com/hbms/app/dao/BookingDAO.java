@@ -93,4 +93,12 @@ public class BookingDAO {
 
         saveAllBookings(bookings);
     }
+
+    public boolean isHallAvailable(int hallNumber, LocalDate date, LocalTime from, LocalTime until) {
+        return getAllBookings().stream()
+                .filter(b -> b.getHallNumber() == hallNumber)
+                .filter(b -> b.getBookingDate().equals(date))
+                .filter(b -> b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
+                .noneMatch(b -> !(until.isBefore(b.getBookingFrom()) || from.isAfter(b.getBookingUntil())));
+    }
 }

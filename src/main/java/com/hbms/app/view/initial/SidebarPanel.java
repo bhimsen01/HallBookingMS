@@ -1,5 +1,8 @@
 package com.hbms.app.view.initial;
 
+import com.hbms.app.model.User;
+import com.hbms.app.session.Session;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,28 +19,26 @@ public class SidebarPanel extends JPanel {
         navigationPanel.setLayout(new GridLayout(0,1,5,5));
         navigationPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 20, 5));
 
-        String[] navButtons={
-                "Home",
-                "Halls",
-                "Bookings",
-                "Issues",
-                "Analytics",
-                "Board"
-        };
+        java.util.List<String> navButtonsList = new java.util.ArrayList<>();
+        java.util.List<String> keysList = new java.util.ArrayList<>();
 
-        String[] keys={
-                "HOME",
-                "HALLS",
-                "BOOKINGS",
-                "ISSUES",
-                "ANALYTICS",
-                "BOARD"
-        };
+        navButtonsList.add("Home"); keysList.add("HOME");
+        navButtonsList.add("Halls"); keysList.add("HALLS");
+        navButtonsList.add("Bookings"); keysList.add("BOOKINGS");
+        navButtonsList.add("Issues"); keysList.add("ISSUES");
 
-        for (int i =0;i<navButtons.length;i++){
-            JButton button=createButton(navButtons[i]);
-            String key=keys[i];
-            button.addActionListener(e-> dashboardPanel.showContent(key));
+        if (Session.getCurrentUser().getRole() == User.Role.ADMINISTRATOR || Session.getCurrentUser().getRole() == User.Role.MANAGER) {
+            navButtonsList.add("Analytics"); keysList.add("ANALYTICS");
+        }
+
+        if(Session.getCurrentUser().getRole()==User.Role.ADMINISTRATOR){
+            navButtonsList.add("Board"); keysList.add("BOARD");
+        }
+
+        for (int i = 0; i < navButtonsList.size(); i++) {
+            JButton button = createButton(navButtonsList.get(i));
+            String key = keysList.get(i);
+            button.addActionListener(e -> dashboardPanel.showContent(key));
             navigationPanel.add(button);
         }
 

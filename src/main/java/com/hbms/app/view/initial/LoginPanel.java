@@ -23,7 +23,6 @@ public class LoginPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 0, 8, 0);
 
-        // Title
         JLabel lblTitle = new JLabel("Log in Your Account");
         Font currentFont = lblTitle.getFont();
         Font newFont = currentFont.deriveFont(28f);
@@ -41,21 +40,18 @@ public class LoginPanel extends JPanel {
         tfEmail.setPreferredSize(new Dimension(260, 32));
         pfPassword.setPreferredSize(new Dimension(260, 32));
 
-        // Email
         gbc.gridy = 5;
         add(new JLabel("Email"), gbc);
 
         gbc.gridy = 6;
         add(tfEmail, gbc);
 
-        // Password
         gbc.gridy = 7;
         add(new JLabel("Password"), gbc);
 
         gbc.gridy = 8;
         add(pfPassword, gbc);
 
-        // Message
         lblMessage = new JLabel("");
         lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
 

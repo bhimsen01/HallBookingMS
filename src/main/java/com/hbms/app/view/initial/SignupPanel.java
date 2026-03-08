@@ -22,7 +22,6 @@ public class SignupPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 0, 8, 0);
 
-        // Title
         JLabel lblTitle = new JLabel("Create Your Account");
         Font currentFont = lblTitle.getFont();
         Font newFont = currentFont.deriveFont(28f);
@@ -43,42 +42,36 @@ public class SignupPanel extends JPanel {
         tfEmail.setPreferredSize(new Dimension(260, 32));
         pfPassword.setPreferredSize(new Dimension(260, 32));
 
-        // First name
         gbc.gridy = 1;
         add(new JLabel("First name"), gbc);
 
         gbc.gridy = 2;
         add(tfFirstName, gbc);
 
-        // Last name
         gbc.gridy = 3;
         add(new JLabel("Last name"), gbc);
 
         gbc.gridy = 4;
         add(tfLastName, gbc);
 
-        // Email
         gbc.gridy = 5;
         add(new JLabel("Email"), gbc);
 
         gbc.gridy = 6;
         add(tfEmail, gbc);
 
-        // Password
         gbc.gridy = 7;
         add(new JLabel("Password"), gbc);
 
         gbc.gridy = 8;
         add(pfPassword, gbc);
 
-        // Message
         lblMessage = new JLabel("");
         lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
 
         gbc.gridy = 9;
         add(lblMessage, gbc);
 
-        // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         buttonPanel.setOpaque(false);
 
@@ -96,7 +89,6 @@ public class SignupPanel extends JPanel {
         gbc.insets = new Insets(20, 0, 0, 0);
         add(buttonPanel, gbc);
 
-        // Actions
         btnBack.addActionListener(e -> {
             tfFirstName.setText("");
             tfLastName.setText("");

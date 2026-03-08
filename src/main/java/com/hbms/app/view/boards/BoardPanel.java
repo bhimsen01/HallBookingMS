@@ -3,7 +3,6 @@ package com.hbms.app.view.boards;
 import com.hbms.app.controller.UserController;
 import com.hbms.app.dao.UserDAO;
 import com.hbms.app.model.User;
-import com.hbms.app.view.initial.Refreshable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

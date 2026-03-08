@@ -47,8 +47,6 @@ public class AddHallDialog extends JDialog {
         btnAdd.setBackground(new Color(0, 145, 255));
         JButton btnCancel = new JButton("Cancel");
 
-        // ===== Layout =====
-
         add(new JLabel("Hall Number"));
         add(tfNumber);
 
@@ -80,8 +78,6 @@ public class AddHallDialog extends JDialog {
 
         add(btnAdd);
         add(btnCancel);
-
-        // ===== Actions =====
 
         btnCancel.addActionListener(e -> dispose());
 

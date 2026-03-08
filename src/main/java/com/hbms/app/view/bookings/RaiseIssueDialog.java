@@ -20,7 +20,6 @@ public class RaiseIssueDialog extends JDialog {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
 
-        // ===== Booking ID =====
         JPanel bookingPanel = new JPanel(new BorderLayout(10,10));
         JLabel lblBooking = new JLabel("Booking ID");
         JTextField tfBookingId = new JTextField(bookingId);
@@ -31,7 +30,6 @@ public class RaiseIssueDialog extends JDialog {
         bookingPanel.add(lblBooking, BorderLayout.WEST);
         bookingPanel.add(tfBookingId, BorderLayout.CENTER);
 
-        // ===== Description =====
         JPanel descPanel = new JPanel(new BorderLayout(10,10));
         JLabel lblDesc = new JLabel("Description");
 
@@ -45,7 +43,6 @@ public class RaiseIssueDialog extends JDialog {
         descPanel.add(lblDesc, BorderLayout.NORTH);
         descPanel.add(scroll, BorderLayout.CENTER);
 
-        // ===== Buttons =====
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,20,10));
 
         JButton btnSubmit = new JButton("Submit");
@@ -63,7 +60,6 @@ public class RaiseIssueDialog extends JDialog {
         buttonPanel.add(btnSubmit);
         buttonPanel.add(btnCancel);
 
-        // ===== Add to main =====
         mainPanel.add(bookingPanel);
         mainPanel.add(Box.createVerticalStrut(15));
         mainPanel.add(descPanel);
@@ -72,7 +68,6 @@ public class RaiseIssueDialog extends JDialog {
 
         add(mainPanel);
 
-        // ===== Actions =====
         btnCancel.addActionListener(e -> dispose());
 
         btnSubmit.addActionListener(e -> {

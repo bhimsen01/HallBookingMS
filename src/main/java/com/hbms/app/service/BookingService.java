@@ -5,17 +5,12 @@ import com.hbms.app.dao.BookingDAO;
 import com.hbms.app.dao.HallDAO;
 import com.hbms.app.model.Booking;
 import com.hbms.app.model.Hall;
-import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
 import com.hbms.app.utility.IdCounter;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.List;
 
 public class BookingService {
     private final IdCounter idCounter;
@@ -32,6 +27,11 @@ public class BookingService {
         booking.setUserId(currentUser.getUserId());
         booking.setBookingCreatedAt(LocalDateTime.now());
         booking.setBookingStatus(Booking.BookingStatus.CONFIRMED);
+
+        // check if hall booked for the selected time
+        if (!bookingDAO.isHallAvailable(booking.getHallNumber(), booking.getBookingDate(), booking.getBookingFrom(), booking.getBookingUntil())) {
+            throw new RuntimeException("Hall is not available at the selected time slot.");
+        }
 
         try{
             bookingDAO.saveBooking(booking);
@@ -115,6 +115,8 @@ public class BookingService {
         HallDAO hallDAO = new HallDAO();
         return hallDAO.getAllHalls().size();
     }
+
+
 
 //    public void completeBooking(String bookingId){
 //        Booking bookingToCancel=bookingDAO.findById(bookingId);
