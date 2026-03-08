@@ -23,6 +23,8 @@ public class MainFrame extends JFrame {
     private IssueController issueController;
     private UserController userController;
     private ReceiptController receiptController;
+    private UserDAO userDAO;
+    private BookingService bookingService;
 
     public MainFrame() {
         IdCounter idCounter = new IdCounter();
@@ -33,10 +35,10 @@ public class MainFrame extends JFrame {
         PaymentDAO paymentDAO = new PaymentDAO();
         HallDAO hallDAO = new HallDAO();
         IssueDAO issueDAO = new IssueDAO();
-        UserDAO userDAO = new UserDAO();
+        this.userDAO=new UserDAO();
 
         // Services
-        BookingService bookingService = new BookingService(idCounter, bookingDAO);
+        this.bookingService = new BookingService(idCounter, bookingDAO);
         ReceiptService receiptService = new ReceiptService(idCounter, receiptDAO);
         PaymentService paymentService = new PaymentService(idCounter, paymentDAO);
         HallService hallService = new HallService(hallDAO);
@@ -75,7 +77,7 @@ public class MainFrame extends JFrame {
 
     public void showDashboard() {
         // Pass all initialized controllers here
-        DashboardPanel dashboard = new DashboardPanel(this, bookingController, hallController, issueController, userController, receiptController);
+        DashboardPanel dashboard = new DashboardPanel(this, bookingController, hallController, issueController, userController, receiptController, userDAO, bookingService);
 
         mainPanel.add(dashboard, "DASHBOARD");
         cardLayout.show(mainPanel, "DASHBOARD");

@@ -2,7 +2,9 @@ package com.hbms.app.service;
 
 import com.hbms.app.auth.AuthUser;
 import com.hbms.app.dao.BookingDAO;
+import com.hbms.app.dao.HallDAO;
 import com.hbms.app.model.Booking;
+import com.hbms.app.model.Hall;
 import com.hbms.app.model.User;
 import com.hbms.app.session.Session;
 import com.hbms.app.utility.IdCounter;
@@ -12,6 +14,7 @@ import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.List;
 
 public class BookingService {
@@ -53,6 +56,64 @@ public class BookingService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to cancel booking. ",e);
         }
+    }
+
+    public long getTotalBookings() {
+        BookingDAO bookingDAO = new BookingDAO();
+        return (bookingDAO.getAllBookings().size());
+    }
+
+    public long getConfirmedBookings() {
+        BookingDAO bookingDAO = new BookingDAO();
+        long count = bookingDAO.getAllBookings().stream()
+                .filter(b -> b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
+                .count();
+        return count;
+    }
+
+    public long getCancelledBookings() {
+        BookingDAO bookingDAO = new BookingDAO();
+        long count = bookingDAO.getAllBookings().stream()
+                .filter(b -> b.getBookingStatus() == Booking.BookingStatus.CANCELLED)
+                .count();
+        return count;
+    }
+
+    public String getMonthlyRevenue() {
+        BookingDAO bookingDAO = new BookingDAO();
+        LocalDate now = LocalDate.now();
+        YearMonth currentMonth = YearMonth.from(now);
+
+        double revenue = bookingDAO.getAllBookings().stream()
+                .filter(b -> YearMonth.from(b.getBookingDate()).equals(currentMonth))
+                .filter(b -> b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
+                .mapToDouble(Booking::getAmount)
+                .sum();
+
+        return "RM " + String.format("%.2f", revenue);
+    }
+
+    public String getTotalRevenue() {
+        BookingDAO bookingDAO = new BookingDAO();
+        double revenue = bookingDAO.getAllBookings().stream()
+                .filter(b -> b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
+                .mapToDouble(Booking::getAmount)
+                .sum();
+
+        return "RM " + String.format("%.2f", revenue);
+    }
+
+    public long getAvailableHalls() {
+        HallDAO hallDAO = new HallDAO();
+        long count = hallDAO.getAllHalls().stream()
+                .filter(h -> h.getHallStatus() == Hall.HallStatus.AVAILABLE)
+                .count();
+        return count;
+    }
+
+    public long getTotalHalls() {
+        HallDAO hallDAO = new HallDAO();
+        return hallDAO.getAllHalls().size();
     }
 
 //    public void completeBooking(String bookingId){

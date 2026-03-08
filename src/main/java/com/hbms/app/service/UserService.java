@@ -114,20 +114,20 @@ public class UserService {
             throw new RuntimeException("User to update is not found.");
         }
 
-        if (updatedUser.getFirstName()!=null){
+        if (!updatedUser.getFirstName().isEmpty() && updatedUser.getFirstName()!=null){
             userToUpdate.setFirstName(updatedUser.getFirstName());
         }
 
-        if (updatedUser.getLastName()!=null){
+        if (!updatedUser.getLastName().isEmpty() && updatedUser.getLastName()!=null){
             userToUpdate.setLastName(updatedUser.getLastName());
         }
 
-        if (updatedUser.getEmail()!=null){
+        if (!updatedUser.getEmail().isEmpty() && updatedUser.getEmail()!=null){
             userToUpdate.setEmail(updatedUser.getEmail());
         }
 
-        if (updatedUser.getPassword()!=null){
-            userToUpdate.setPassword(updatedUser.getPassword());
+        if (!updatedUser.getPassword().isEmpty() && updatedUser.getPassword()!=null){
+            userToUpdate.setPassword(PasswordUtil.hashPassword(updatedUser.getPassword()));
         }
 
         try{

@@ -116,7 +116,7 @@ public class LoginPanel extends JPanel {
                     lblMessage.setText("");
                     frame.showDashboard();
                 }
-            } catch (IllegalArgumentException exception){
+            } catch (Exception exception){
                 lblMessage.setForeground(new Color(255, 66,69));
                 lblMessage.setText("Incorrect email or password.");
             }

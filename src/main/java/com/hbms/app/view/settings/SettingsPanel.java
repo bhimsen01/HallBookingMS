@@ -6,6 +6,6 @@ import java.awt.*;
 public class SettingsPanel extends JPanel {
     public SettingsPanel() {
         setLayout(new FlowLayout());
-        add(new JLabel("Still under development."));
+        add(new JLabel("Currently under development."));
     }
 }
